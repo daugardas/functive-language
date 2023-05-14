@@ -1,5 +1,7 @@
 package org.functive;
 
+import java.util.ArrayList;
+
 import functive.functiveBaseVisitor;
 import functive.functiveParser;
 
@@ -8,13 +10,13 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitProgram(functiveParser.ProgramContext ctx) {
-        System.out.println("Visited Program: " + ctx.getText());
+        // System.out.println("Visited Program: " + ctx.getText());
         return super.visitProgram(ctx);
     }
 
     @Override
     public Object visitStatement(functiveParser.StatementContext ctx) {
-        System.out.println("Visited Statement: " + ctx.getText());
+        // System.out.println("Visited Statement: " + ctx.getText());
         return super.visitStatement(ctx);
     }
 
@@ -23,19 +25,19 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         // check if the var declaration has a value
         if (ctx.expression() != null) {
             // var declaration with value
-            System.out.println("Visited VarDeclaration with value: " + ctx.IDENTIFIER());
+            //System.out.println("Visited VarDeclaration with value: " + ctx.IDENTIFIER());
             if (symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
                 throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
             }
 
-            System.out.println("TYPE: " + ctx.TYPE().getText());
+            //System.out.println("TYPE: " + ctx.TYPE().getText());
             switch (ctx.TYPE().getText()) {
                 case "int" -> {
                     // because this should be an integer, we will try to convert the value to an
                     // integer
                     try {
                         Integer intValue = Integer.parseInt(ctx.expression().getText());
-                        System.out.println("intValue: " + intValue);
+                        //System.out.println("intValue: " + intValue);
                         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
                     } catch (NumberFormatException e) {
                         throw new RuntimeException("Invalid value for int: " + ctx.expression().getText());
@@ -45,7 +47,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     // because this should be a float, we will try to convert the value to a float
                     try {
                         Float floatValue = Float.parseFloat(ctx.expression().getText());
-                        System.out.println("floatValue: " + floatValue);
+                        //System.out.println("floatValue: " + floatValue);
                         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
                     } catch (NumberFormatException e) {
                         throw new RuntimeException("Invalid value for float: " + ctx.expression().getText());
@@ -56,7 +58,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     // boolean
                     if (ctx.expression().getText().equals("true") || ctx.expression().getText().equals("false")) {
                         Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
-                        System.out.println("boolValue: " + boolValue);
+                        //System.out.println("boolValue: " + boolValue);
                         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
                     } else {
                         throw new RuntimeException("Invalid value for boolean: " + ctx.expression().getText());
@@ -65,17 +67,15 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                 case "string" -> {
                     // because this should be a string, we will try to convert the value to a string
                     String stringValue = ctx.expression().getText().replace("\"", "");
-                    System.out.println("stringValue: " + stringValue);
+                    //System.out.println("stringValue: " + stringValue);
                     symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
                 }
                 default -> {
                     throw new RuntimeException("Unknown type: " + ctx.TYPE().getText());
                 }
             }
-        } else
-
-        {
-            System.out.println("Visited VarDeclaration without value: " + ctx.IDENTIFIER());
+        } else {
+            //System.out.println("Visited VarDeclaration without value: " + ctx.IDENTIFIER());
 
             // set the default values for the variable
             switch (ctx.TYPE().getText()) {
@@ -93,8 +93,93 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitArrayDeclaration(functiveParser.ArrayDeclarationContext ctx) {
-        System.out.println("Visited ArrayDeclaration: " + ctx.getText());
-        return super.visitArrayDeclaration(ctx);
+        // System.out.println("Visited ArrayDeclaration: " + ctx.getText());
+
+        Object array;
+        // check if the array declaration has an expression list
+        if (ctx.expressionList() != null) {
+            // array declaration with expression list
+            //System.out.println("Visited ArrayDeclaration with expression list: " + ctx.IDENTIFIER());
+
+            // check if the variable is already declared
+            if (symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
+                throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
+            }
+
+            //System.out.println("TYPE: " + ctx.TYPE().getText());
+            switch (ctx.TYPE().getText()) {
+                case "int" -> {
+                    array = new ArrayList<Integer>();
+                    for (var expression : ctx.expressionList().expression()) {
+                        try {
+                            Integer intValue = Integer.parseInt(expression.getText());
+                            //System.out.println("intValue: " + intValue);
+                            ((ArrayList<Integer>) array).add(intValue);
+                        } catch (NumberFormatException e) {
+                            throw new RuntimeException("Invalid value for int: " + expression.getText());
+                        }
+                    }
+                }
+                case "float" -> {
+                    array = new ArrayList<Float>();
+                    for (var expression : ctx.expressionList().expression()) {
+                        try {
+                            Float floatValue = Float.parseFloat(expression.getText());
+                            //System.out.println("floatValue: " + floatValue);
+                            ((ArrayList<Float>) array).add(floatValue);
+                        } catch (NumberFormatException e) {
+                            throw new RuntimeException("Invalid value for float: " + expression.getText());
+                        }
+                    }
+                }
+                case "boolean" -> {
+                    array = new ArrayList<Boolean>();
+                    for (var expression : ctx.expressionList().expression()) {
+                        if (expression.getText().equals("true") || expression.getText().equals("false")) {
+                            Boolean boolValue = Boolean.parseBoolean(expression.getText());
+                            //System.out.println("boolValue: " + boolValue);
+                            ((ArrayList<Boolean>) array).add(boolValue);
+                        } else {
+                            throw new RuntimeException("Invalid value for boolean: " + expression.getText());
+                        }
+                    }
+                }
+                case "string" -> {
+                    array = new ArrayList<String>();
+                    for (var expression : ctx.expressionList().expression()) {
+                        String stringValue = expression.getText().replace("\"", "");
+                        //System.out.println("stringValue: " + stringValue);
+                        ((ArrayList<String>) array).add(stringValue);
+                    }
+                }
+                default -> {
+                    throw new RuntimeException("Unknown type: " + ctx.TYPE().getText());
+                }
+            }
+        } else {
+            //System.out.println("Visited ArrayDeclaration without expression list: " + ctx.IDENTIFIER());
+            // check type
+            switch (ctx.TYPE().getText()) {
+                case "int" -> {
+                    array = new ArrayList<Integer>();
+                }
+                case "float" -> {
+                    array = new ArrayList<Float>();
+                }
+                case "boolean" -> {
+                    array = new ArrayList<Boolean>();
+                }
+                case "string" -> {
+                    array = new ArrayList<String>();
+                }
+                default -> {
+                    throw new RuntimeException("Unknown type: " + ctx.TYPE().getText());
+                }
+            }
+
+        }
+        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), array);
+        return null;
     }
 
     @Override
