@@ -9,35 +9,23 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     public FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
 
     @Override
-    public Object visitProgram(functiveParser.ProgramContext ctx) {
-        // System.out.println("Visited Program: " + ctx.getText());
-        return super.visitProgram(ctx);
-    }
-
-    @Override
-    public Object visitStatement(functiveParser.StatementContext ctx) {
-        // System.out.println("Visited Statement: " + ctx.getText());
-        return super.visitStatement(ctx);
-    }
-
-    @Override
     public Object visitVarDeclaration(functiveParser.VarDeclarationContext ctx) {
         // check if the var declaration has a value
         if (ctx.expression() != null) {
             // var declaration with value
-            //System.out.println("Visited VarDeclaration with value: " + ctx.IDENTIFIER());
+            // System.out.println("Visited VarDeclaration with value: " + ctx.IDENTIFIER());
             if (symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
                 throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
             }
 
-            //System.out.println("TYPE: " + ctx.TYPE().getText());
+            // System.out.println("TYPE: " + ctx.TYPE().getText());
             switch (ctx.TYPE().getText()) {
                 case "int" -> {
                     // because this should be an integer, we will try to convert the value to an
                     // integer
                     try {
                         Integer intValue = Integer.parseInt(ctx.expression().getText());
-                        //System.out.println("intValue: " + intValue);
+                        // System.out.println("intValue: " + intValue);
                         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
                     } catch (NumberFormatException e) {
                         throw new RuntimeException("Invalid value for int: " + ctx.expression().getText());
@@ -47,7 +35,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     // because this should be a float, we will try to convert the value to a float
                     try {
                         Float floatValue = Float.parseFloat(ctx.expression().getText());
-                        //System.out.println("floatValue: " + floatValue);
+                        // System.out.println("floatValue: " + floatValue);
                         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
                     } catch (NumberFormatException e) {
                         throw new RuntimeException("Invalid value for float: " + ctx.expression().getText());
@@ -58,7 +46,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     // boolean
                     if (ctx.expression().getText().equals("true") || ctx.expression().getText().equals("false")) {
                         Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
-                        //System.out.println("boolValue: " + boolValue);
+                        // System.out.println("boolValue: " + boolValue);
                         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
                     } else {
                         throw new RuntimeException("Invalid value for boolean: " + ctx.expression().getText());
@@ -67,7 +55,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                 case "string" -> {
                     // because this should be a string, we will try to convert the value to a string
                     String stringValue = ctx.expression().getText().replace("\"", "");
-                    //System.out.println("stringValue: " + stringValue);
+                    // System.out.println("stringValue: " + stringValue);
                     symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
                 }
                 default -> {
@@ -75,7 +63,8 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                 }
             }
         } else {
-            //System.out.println("Visited VarDeclaration without value: " + ctx.IDENTIFIER());
+            // System.out.println("Visited VarDeclaration without value: " +
+            // ctx.IDENTIFIER());
 
             // set the default values for the variable
             switch (ctx.TYPE().getText()) {
@@ -99,21 +88,22 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         // check if the array declaration has an expression list
         if (ctx.expressionList() != null) {
             // array declaration with expression list
-            //System.out.println("Visited ArrayDeclaration with expression list: " + ctx.IDENTIFIER());
+            // System.out.println("Visited ArrayDeclaration with expression list: " +
+            // ctx.IDENTIFIER());
 
             // check if the variable is already declared
             if (symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
                 throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
             }
 
-            //System.out.println("TYPE: " + ctx.TYPE().getText());
+            // System.out.println("TYPE: " + ctx.TYPE().getText());
             switch (ctx.TYPE().getText()) {
                 case "int" -> {
                     array = new ArrayList<Integer>();
                     for (var expression : ctx.expressionList().expression()) {
                         try {
                             Integer intValue = Integer.parseInt(expression.getText());
-                            //System.out.println("intValue: " + intValue);
+                            // System.out.println("intValue: " + intValue);
                             ((ArrayList<Integer>) array).add(intValue);
                         } catch (NumberFormatException e) {
                             throw new RuntimeException("Invalid value for int: " + expression.getText());
@@ -125,7 +115,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     for (var expression : ctx.expressionList().expression()) {
                         try {
                             Float floatValue = Float.parseFloat(expression.getText());
-                            //System.out.println("floatValue: " + floatValue);
+                            // System.out.println("floatValue: " + floatValue);
                             ((ArrayList<Float>) array).add(floatValue);
                         } catch (NumberFormatException e) {
                             throw new RuntimeException("Invalid value for float: " + expression.getText());
@@ -137,7 +127,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     for (var expression : ctx.expressionList().expression()) {
                         if (expression.getText().equals("true") || expression.getText().equals("false")) {
                             Boolean boolValue = Boolean.parseBoolean(expression.getText());
-                            //System.out.println("boolValue: " + boolValue);
+                            // System.out.println("boolValue: " + boolValue);
                             ((ArrayList<Boolean>) array).add(boolValue);
                         } else {
                             throw new RuntimeException("Invalid value for boolean: " + expression.getText());
@@ -148,7 +138,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     array = new ArrayList<String>();
                     for (var expression : ctx.expressionList().expression()) {
                         String stringValue = expression.getText().replace("\"", "");
-                        //System.out.println("stringValue: " + stringValue);
+                        // System.out.println("stringValue: " + stringValue);
                         ((ArrayList<String>) array).add(stringValue);
                     }
                 }
@@ -157,7 +147,8 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
                 }
             }
         } else {
-            //System.out.println("Visited ArrayDeclaration without expression list: " + ctx.IDENTIFIER());
+            // System.out.println("Visited ArrayDeclaration without expression list: " +
+            // ctx.IDENTIFIER());
             // check type
             switch (ctx.TYPE().getText()) {
                 case "int" -> {
@@ -185,7 +176,130 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     @Override
     public Object visitAssignment(functiveParser.AssignmentContext ctx) {
         System.out.println("Visited Assignment: " + ctx.getText());
-        return super.visitAssignment(ctx);
+
+        // check if the variable is declared
+        if (!symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
+            throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
+        }
+
+        // assignment to variable
+        // System.out.println("Assignment to variable: " + ctx.IDENTIFIER().getText() +
+        // " with value: "
+        // + ctx.expression().getText());
+
+        // check the type of the variable and the expression, and assign the value
+        Object variable = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+
+        if (variable instanceof Integer) {
+            // check if expression is an integer
+            try {
+                Integer intValue = Integer.parseInt(ctx.expression().getText());
+                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(
+                        "Invalid value for " + ctx.IDENTIFIER().getText() + ": " + ctx.expression().getText());
+            }
+        } else if (variable instanceof Float) {
+            // check if expression is a float
+            try {
+                Float floatValue = Float.parseFloat(ctx.expression().getText());
+                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(
+                        "Invalid value for " + ctx.IDENTIFIER().getText() + ": " + ctx.expression().getText());
+            }
+        } else if (variable instanceof Boolean) {
+            // check if expression is a boolean
+            if (ctx.expression().getText().equals("true") || ctx.expression().getText().equals("false")) {
+                Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
+                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
+            } else {
+                throw new RuntimeException(
+                        "Invalid value for " + ctx.IDENTIFIER().getText() + ": " + ctx.expression().getText());
+            }
+        } else if (variable instanceof String) {
+            // check if expression is a string
+            String stringValue = ctx.expression().getText().replace("\"", "");
+            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
+        } else {
+            throw new RuntimeException("Unknown type: " + variable.getClass());
+        }
+
+        return null;
+        // return super.visitAssignment(ctx);
+    }
+
+    @Override
+    public Object visitArrayAssignment(functiveParser.ArrayAssignmentContext ctx) {
+        // check if the variable is declared
+        if (!symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
+            throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
+        }
+        // print out the array saved in the table
+        // for (var value : (ArrayList<?>) symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
+        //     System.out.println(value);
+        // }
+        // System.out.println("Visited ArrayAssignment: " + ctx.getText());
+        Object array = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+        Class<?> arrayType = null;
+        if (!((ArrayList<?>) array).isEmpty()) {
+            arrayType = ((ArrayList<?>) array).get(0).getClass();
+        }
+
+        Object newValues = visit(ctx.expressionList());
+        Class<?> newValuesType = null;
+        if (!((ArrayList<?>) newValues).isEmpty()) {
+            newValuesType = ((ArrayList<?>) newValues).get(0).getClass();
+        }
+
+        // System.out.println(arrayType);
+
+        if (arrayType != null && arrayType != newValuesType)
+            throw new RuntimeException("Invalid type for array: " + ctx.IDENTIFIER().getText());
+
+        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValues);
+
+        // print out the array saved in the table
+        // for (var value : (ArrayList<?>) symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
+        //     System.out.println(value);
+        // }
+        return null;
+    }
+
+    @Override
+    public Object visitArrayAccessAssignment(functiveParser.ArrayAccessAssignmentContext ctx) {
+        // check if the variable is declared
+        if (!symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
+            throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
+        }
+        // System.out.println("Visited ArrayAccessAssignment: " + ctx.getText());
+        Object array = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+        Class<?> arrayType = null;
+        if (!((ArrayList<?>) array).isEmpty()) {
+            arrayType = ((ArrayList<?>) array).get(0).getClass();
+        }
+        Integer index = (Integer) visit(ctx.arrayAccess().expression());
+        Object value = visit(ctx.expression());
+
+        // System.out.println(arrayType);
+
+        if (arrayType != null && arrayType != value.getClass())
+            throw new RuntimeException("Invalid type of assignment for " + ctx.IDENTIFIER().getText() + ": "
+                    + ctx.IDENTIFIER().getText());
+
+        if (value instanceof Integer)
+            ((ArrayList<Integer>) array).set(index, (Integer) value);
+        else if (value instanceof Float)
+            ((ArrayList<Float>) array).set(index, (Float) value);
+        else if (value instanceof Boolean)
+            ((ArrayList<Boolean>) array).set(index, (Boolean) value);
+        else if (value instanceof String)
+            ((ArrayList<String>) array).set(index, (String) value);
+        else
+            throw new RuntimeException("Unknown type: " + value.getClass());
+
+        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), array);
+        return null;
     }
 
     @Override
@@ -250,13 +364,70 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitExpression(functiveParser.ExpressionContext ctx) {
-        System.out.println("Visited Expression: " + ctx.getText());
-        return super.visitExpression(ctx);
+        if (ctx.literal().INTEGER() != null)
+            return Integer.parseInt(ctx.literal().INTEGER().getText());
+        else if (ctx.literal().FLOAT() != null)
+            return Float.parseFloat(ctx.literal().FLOAT().getText());
+        else if (ctx.literal().BOOLEAN() != null)
+            return Boolean.parseBoolean(ctx.literal().BOOLEAN().getText());
+        else if (ctx.literal().STRING() != null)
+            return ctx.literal().STRING().getText().replace("\"", "");
+
+        return null;
     }
 
     @Override
     public Object visitExpressionList(functiveParser.ExpressionListContext ctx) {
-        System.out.println("Visited ExpressionList: " + ctx.getText());
-        return super.visitExpressionList(ctx);
+        //System.out.println("Visited ExpressionList: " + ctx.getText());
+        //System.out.println(ctx.expression());
+        // get the first elements type
+        Object firstElement = visit(ctx.expression(0));
+        Class<?> firstElementType = firstElement.getClass();
+
+        // cycle through the rest of the elements and check if they are the same type,
+        // and if they are, add them to the list, otherwise throw an error
+        if (ctx.expression().size() == 0) {
+            return null;
+        }
+
+        if (firstElementType == Integer.class) {
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            for (functiveParser.ExpressionContext expressionContext : ctx.expression()) {
+                Object element = visit(expressionContext);
+                if (element.getClass() != firstElementType)
+                    throw new RuntimeException("Invalid type of assignment for " + ctx.getText());
+                list.add((Integer) element);
+            }
+            return list;
+        } else if (firstElementType == Float.class) {
+            ArrayList<Float> list = new ArrayList<Float>();
+            for (functiveParser.ExpressionContext expressionContext : ctx.expression()) {
+                Object element = visit(expressionContext);
+                if (element.getClass() != firstElementType)
+                    throw new RuntimeException("Invalid type of assignment for " + ctx.getText());
+                list.add((Float) element);
+            }
+            return list;
+        } else if (firstElementType == Boolean.class) {
+            ArrayList<Boolean> list = new ArrayList<Boolean>();
+            for (functiveParser.ExpressionContext expressionContext : ctx.expression()) {
+                Object element = visit(expressionContext);
+                if (element.getClass() != firstElementType)
+                    throw new RuntimeException("Invalid type of assignment for " + ctx.getText());
+                list.add((Boolean) element);
+            }
+            return list;
+        } else if (firstElementType == String.class) {
+            ArrayList<String> list = new ArrayList<String>();
+            for (functiveParser.ExpressionContext expressionContext : ctx.expression()) {
+                Object element = visit(expressionContext);
+                if (element.getClass() != firstElementType)
+                    throw new RuntimeException("Invalid type of assignment for " + ctx.getText());
+                list.add((String) element);
+            }
+            return list;
+        }
+
+        return null;
     }
 }
