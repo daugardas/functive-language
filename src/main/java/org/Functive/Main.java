@@ -1,4 +1,4 @@
-package org.Functive;
+package org.functive;
 
 import functive.functiveLexer;
 import functive.functiveParser;

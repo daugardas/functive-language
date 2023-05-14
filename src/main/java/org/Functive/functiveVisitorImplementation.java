@@ -1,4 +1,4 @@
-package org.Functive;
+package org.functive;
 
 import functive.functiveBaseVisitor;
 import functive.functiveParser;
