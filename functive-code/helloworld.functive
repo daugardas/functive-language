@@ -1,0 +1,10 @@
+int testVar = 5;
+int testVar2;
+float floatTest = 1.23;
+float floatTest2;
+boolean boolTest = true;
+boolean boolTest2;
+string stringTest = "test";
+strin stringTest2;
+int [] testarray = {1,2,3};
+int [] testarray2;

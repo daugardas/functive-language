@@ -33,3 +33,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### ANTLR4 VSCODE PLUGIN ###
+/src/main/antlr4/functive/.antlr/

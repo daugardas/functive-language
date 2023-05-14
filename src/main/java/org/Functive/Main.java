@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args) {
         try {
-            Path path = Paths.get("functive-code/test.functive");
+            Path path = Paths.get("functive-code/helloworld.functive");
             System.out.println(path.toAbsolutePath().toString());
             execute(CharStreams.fromFileName(path.toAbsolutePath().toString()));
         } catch (Exception ex) {
@@ -27,7 +27,7 @@ public class Main {
         parser.setBuildParseTree(true);
         ParseTree tree = parser.program();
 
-        functiveVisitorImplementation visitor = new functiveVisitorImplementation();
+        FunctiveVisitorImplementation visitor = new FunctiveVisitorImplementation();
         return visitor.visit(tree);
     }
 }
