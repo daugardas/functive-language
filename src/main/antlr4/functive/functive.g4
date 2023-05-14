@@ -7,6 +7,8 @@ program: statement* EOF;
 statement:
 	varDeclaration ';'
 	| arrayDeclaration ';'
+	| arrayAssignment ';'
+	| arrayAccessAssignment ';'
 	| assignment ';'
 	| ifStatement
 	| switchStatement
@@ -25,7 +27,11 @@ arrayDeclaration:
 	TYPE ('[' ']') IDENTIFIER ('=' '{' expressionList '}')?;
 
 // Assignment
+arrayAccessAssignment: IDENTIFIER arrayAccess '=' expression;
+arrayAccess: '[' expression ']';
+arrayAssignment: IDENTIFIER '=' '{' expressionList '}';
 assignment: IDENTIFIER '=' expression;
+// arrayAccess is optional, because it means that we are specifying the index of the array
 
 // If statement
 ifStatement:
@@ -89,3 +95,8 @@ STRING: '"' ~[\r\n"]* '"';
 BOOLEAN: 'true' | 'false';
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
 WS: [ \t\r\n]+ -> skip;
+
+// Lexer rules
+SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
+
+MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
