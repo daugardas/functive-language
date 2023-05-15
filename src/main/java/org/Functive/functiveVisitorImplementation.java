@@ -499,8 +499,12 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitNotEqualExpression(functiveParser.NotEqualExpressionContext ctx) {
-        System.out.println("Visited NotEqualExpression: " + ctx.getText());
-        return super.visitNotEqualExpression(ctx);
+        // Visit the left and right expressions
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        // Compare the values of the left and right expressions
+        return !left.equals(right);
     }
 
     @Override
