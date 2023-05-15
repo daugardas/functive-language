@@ -1,4 +1,4 @@
-package org.Functive;
+package org.functive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -314,15 +314,6 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object condition = visit(ctx.expression());
         System.out.println("Condition: " + condition);
 
-        // // If the condition is true, visit the if block
-        // if (conditionResult) {
-        // return visit(ctx.ifBlock);
-        // }
-        // // Otherwise, visit the else block (if it exists)
-        // else if (ctx.elseBlock != null) {
-        // return visit(ctx.elseBlock);
-        // }
-
         return null;
     }
 
@@ -529,14 +520,28 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
 
     @Override
     public Object visitGreaterThanExpression(functiveParser.GreaterThanExpressionContext ctx) {
-        System.out.println("Visited GreaterThanExpression: " + ctx.getText());
-        return super.visitGreaterThanExpression(ctx);
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        // check that left and right are numbers
+        if(!(left instanceof Number) || !(right instanceof Number))
+            throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " > " + ctx.expression(1));
+
+        // Compare the values of the left and right expressions
+        return ((Number) left).doubleValue() > ((Number) right).doubleValue();
     }
 
     @Override
     public Object visitGreaterThanEqualExpression(functiveParser.GreaterThanEqualExpressionContext ctx) {
-        System.out.println("Visited GreaterThanEqualExpression: " + ctx.getText());
-        return super.visitGreaterThanEqualExpression(ctx);
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        // check that left and right are numbers
+        if(!(left instanceof Number) || !(right instanceof Number))
+            throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " >= " + ctx.expression(1));
+
+        // Compare the values of the left and right expressions
+        return ((Number) left).doubleValue() >= ((Number) right).doubleValue();
     }
 
     @Override
@@ -561,8 +566,15 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
 
     @Override
     public Object visitLessThanExpression(functiveParser.LessThanExpressionContext ctx) {
-        System.out.println("Visited LessThanExpression: " + ctx.getText());
-        return super.visitLessThanExpression(ctx);
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        // check that left and right are numbers
+        if(!(left instanceof Number) || !(right instanceof Number))
+            throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " < " + ctx.expression(1));
+
+        // Compare the values of the left and right expressions
+        return ((Number) left).doubleValue() < ((Number) right).doubleValue();
     }
 
     @Override
@@ -572,26 +584,101 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
 
     @Override
     public Object visitLessThanEqualExpression(functiveParser.LessThanEqualExpressionContext ctx) {
-        System.out.println("Visited LessThanEqualExpression: " + ctx.getText());
-        return super.visitLessThanEqualExpression(ctx);
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        // check that left and right are numbers
+        if(!(left instanceof Number) || !(right instanceof Number))
+            throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " <= " + ctx.expression(1));
+
+        // Compare the values of the left and right expressions
+        return ((Number) left).doubleValue() <= ((Number) right).doubleValue();
     }
 
     @Override
     public Object visitOrExpression(functiveParser.OrExpressionContext ctx) {
-        System.out.println("Visited OrExpression: " + ctx.getText());
-        return super.visitOrExpression(ctx);
+        //System.out.println("Visited AndExpression: " + ctx.getText());
+
+        // Visit the left and right expressions
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        //System.out.println("Left: " + left + ", Right: " + right);
+
+        // check if left is 0 or 1 and right is 0 or 1, then cast them to boolean
+        if (left instanceof Integer && right instanceof Integer) {
+            if ((int) left == 0)
+                left = false;
+            else if ((int) left == 1)
+                left = true;
+            else
+                throw new RuntimeException(
+                        "Invalid type for OR operation: " + ctx.expression(0) + " && " + ctx.expression(1));
+
+            if ((int) right == 0)
+                right = false;
+            else if ((int) right == 1)
+                right = true;
+            else
+                throw new RuntimeException(
+                        "Invalid type for OR operation: " + ctx.expression(0) + " && " + ctx.expression(1));
+        }
+
+        if (!(left instanceof Boolean) || !(right instanceof Boolean))
+            throw new RuntimeException(
+                    "Invalid type for OR operation: " + ctx.expression(0) + " && " + ctx.expression(1));
+
+        // Compute the result of the AND operation
+        boolean result = (boolean) left || (boolean) right;
+
+        return result;
     }
 
     @Override
     public Object visitAndExpression(functiveParser.AndExpressionContext ctx) {
-        System.out.println("Visited AndExpression: " + ctx.getText());
-        return super.visitAndExpression(ctx);
+        //System.out.println("Visited AndExpression: " + ctx.getText());
+
+        // Visit the left and right expressions
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        //System.out.println("Left: " + left + ", Right: " + right);
+
+        // check if left is 0 or 1 and right is 0 or 1, then cast them to boolean
+        if (left instanceof Integer && right instanceof Integer) {
+            if ((int) left == 0)
+                left = false;
+            else if ((int) left == 1)
+                left = true;
+            else
+                throw new RuntimeException(
+                        "Invalid type for AND operation: " + ctx.expression(0) + " && " + ctx.expression(1));
+
+            if ((int) right == 0)
+                right = false;
+            else if ((int) right == 1)
+                right = true;
+            else
+                throw new RuntimeException(
+                        "Invalid type for AND operation: " + ctx.expression(0) + " && " + ctx.expression(1));
+        }
+
+        if (!(left instanceof Boolean) || !(right instanceof Boolean))
+            throw new RuntimeException(
+                    "Invalid type for AND operation: " + ctx.expression(0) + " && " + ctx.expression(1));
+
+        // Compute the result of the AND operation
+        boolean result = (boolean) left && (boolean) right;
+
+        return result;
     }
 
     // visits the literal expression, which is just one value which is either int,
     // float, boolean, or string
     @Override
     public Object visitLiteralExpression(functiveParser.LiteralExpressionContext ctx) {
+        // check
+
         if (ctx.literal().INTEGER() != null)
             return Integer.parseInt(ctx.literal().INTEGER().getText());
         else if (ctx.literal().FLOAT() != null)
@@ -602,6 +689,11 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
             return ctx.literal().STRING().getText().replace("\"", "");
 
         return null;
+    }
+
+    @Override
+    public Object visitIdentifierExpression(functiveParser.IdentifierExpressionContext ctx) {
+        return symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
     }
 
     @Override
