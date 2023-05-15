@@ -27,7 +27,7 @@ public class Main {
         parser.setBuildParseTree(true);
         ParseTree tree = parser.program();
 
-        FunctiveVisitorImplementation visitor = new FunctiveVisitorImplementation();
+        functiveVisitorImplementation visitor = new functiveVisitorImplementation();
         return visitor.visit(tree);
     }
 }
