@@ -72,17 +72,25 @@ returnStatement: 'return' expression?;
 
 // Expression
 expression:
-	expression ('+' | '-') expression
-	| expression ('*' | '/' | '%') expression
-	| expression ('<' | '>' | '<=' | '>=') expression
-	| expression ('==' | '!=') expression
-	| expression ('&&' | '||') expression
-	| expression '[' expression ']'
-	| expression '.' IDENTIFIER
-	| '(' expression ')'
-	| literal
-	| IDENTIFIER
-	| functionCall;
+	expression '+' expression #addExpression
+	| expression '-' expression #subtractExpression
+	| expression '*' expression #multiplyExpression
+	| expression '/' expression #divideExpression
+	| expression '%' expression #modulusExpression
+	| expression '<' expression #lessThanExpression
+	| expression '>' expression #greaterThanExpression
+	| expression '<=' expression #lessThanEqualExpression
+	| expression '>=' expression #greaterThanEqualExpression
+	| expression '==' expression #equalExpression
+	| expression '!=' expression #notEqualExpression
+	| expression '&&' expression #andExpression
+	| expression '||' expression #orExpression
+	| expression '[' expression ']' #arrayAccessExpression
+	| expression '.' IDENTIFIER #objectAccessExpression
+	| '(' expression ')' #parenthesisExpression
+	| literal #literalExpression
+	| IDENTIFIER #identifierExpression
+	| functionCall #functionCallExpression; 
 literal: INTEGER | FLOAT | STRING | BOOLEAN;
 
 expressionList: expression (',' expression)*;
