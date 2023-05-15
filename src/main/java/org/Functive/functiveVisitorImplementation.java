@@ -456,72 +456,67 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
         return null;
     } 
 
-//     @Override
-//     public Object visitFunctionDeclaration(functiveParser.FunctionDeclarationContext ctx) {
-//     System.out.println("Visited FunctionDeclaration: " + ctx.getText());
+    @Override
+    public Object visitFunctionDeclaration(functiveParser.FunctionDeclarationContext ctx) {
+    System.out.println("Visited FunctionDeclaration: " + ctx.getText());
     
-//     // Retrieve function details
-//     String returnType = ctx.TYPE() != null ? ctx.TYPE().getText() : "void";
-//     String functionName = ctx.IDENTIFIER().getText();
+    // Retrieve function details
+    String returnType = ctx.TYPE() != null ? ctx.TYPE().getText() : "void";
+    String functionName = ctx.IDENTIFIER().getText();
     
-//     // Visit function parameters
-//     ParametersContext parametersCtx = ctx.parameters();
-//     if (parametersCtx != null) {
-//         List<ParameterContext> parameterList = parametersCtx.parameter();
-//         for (ParameterContext parameterCtx : parameterList) {
-//             visitParameter(parameterCtx);
-//         }
-//     }
-    
-//     // Visit function body statements
-//     List<StatementContext> statementList = ctx.statement();
-//     for (StatementContext statementCtx : statementList) {
-//         visitStatement(statementCtx);
-//     }
-    
-//     return null;
-//     }
-
-//     @Override
-//     public Object visitFunctionCall(functiveParser.FunctionCallContext ctx) {
-//     System.out.println("Visited FunctionCall: " + ctx.getText());
-//     // Retrieve function call details
-//     String functionName = ctx.IDENTIFIER().getText();
-//     // Visit function call arguments
-//     ArgumentsContext argumentsCtx = ctx.arguments();
-//     if (argumentsCtx != null) {
-//         List<ExpressionContext> argumentList = argumentsCtx.expression();
-//         for (ExpressionContext argumentCtx : argumentList) {
-//             visitExpression(argumentCtx);
-//         }
-//     }
-//     return null;
-//     }
+    // Visit function parameters TODO
 
 
-//     @Override
-//     public Object visitPrint(functiveParser.PrintContext ctx) {
-//     System.out.println("Visited Print: " + ctx.getText());
-    
-//     // Visit the expression to be printed
-//     ExpressionContext expressionCtx = ctx.expression();
-//     visitExpression(expressionCtx);
-    
-//     return null;
-// }
-    
-//     @Override
-//     public Object visitReturnStatement(functiveParser.ReturnStatementContext ctx) {
-//     System.out.println("Visited ReturnStatement: " + ctx.getText());
+    // Visit function body statements TODO
 
-//     // Visit the expression to be returned
-//     ExpressionContext expressionCtx = ctx.expression();
-//     if (expressionCtx != null) {
-//         visitExpression(expressionCtx);
-//     }
+    // - Process function details and parameters
+    // - Perform any necessary actions or validations
 
-//     return null;
-// }
+
+
+    return null;
+    
+    }
+
+
+
+
+    @Override
+    public Object visitFunctionCall(functiveParser.FunctionCallContext ctx) {
+    System.out.println("Visited FunctionCall: " + ctx.getText());
+    // Retrieve function call details
+    String functionName = ctx.IDENTIFIER().getText();
+
+    // Visit function call arguments
+    
+    return null;
+    }
+
+
+    @Override
+    public Object visitPrint(functiveParser.PrintContext ctx) {
+    System.out.println("Visited Print: " + ctx.getText());
+
+
+    Object printExpression = visit(ctx.expression());
+    
+    
+    
+    return null;
+    }
+
+
+
+    
+    
+    @Override
+    public Object visitReturnStatement(functiveParser.ReturnStatementContext ctx) {
+    System.out.println("Visited ReturnStatement: " + ctx.getText());
+    Object returnExpression = visit(ctx.expression());
+    
+
+    return null;
+}
 
     @Override
     public Object visitGreaterThanExpression(functiveParser.GreaterThanExpressionContext ctx) {
