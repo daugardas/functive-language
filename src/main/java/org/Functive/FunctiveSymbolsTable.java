@@ -1,4 +1,4 @@
-package org.functive;
+package org.Functive;
 
 import java.util.HashMap;
 import java.util.Map;
