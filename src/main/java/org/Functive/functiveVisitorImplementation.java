@@ -7,7 +7,7 @@ import functive.functiveBaseVisitor;
 import functive.functiveParser;
 
 
-public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
+public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
     public FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
 
     @Override
@@ -324,56 +324,56 @@ public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
     // Retrieve the switch expression
     Object switchExpr = visit(ctx.expression());
 
-    if (switchExpr != null) {
-        // Convert switch expression to the appropriate type if necessary
-        if (switchExpr instanceof String) {
-            switchExpr = switchExpr.toString();  // Convert to string
-        } else if (switchExpr instanceof Double) {
-            switchExpr = ((Double) switchExpr).intValue();  // Convert to int
-        } else if (switchExpr instanceof Float) {
-            switchExpr = ((Float) switchExpr).intValue();  // Convert to int
-        }
+    // if (switchExpr != null) {
+    //     // Convert switch expression to the appropriate type if necessary
+    //     if (switchExpr instanceof String) {
+    //         switchExpr = switchExpr.toString();  // Convert to string
+    //     } else if (switchExpr instanceof Double) {
+    //         switchExpr = ((Double) switchExpr).intValue();  // Convert to int
+    //     } else if (switchExpr instanceof Float) {
+    //         switchExpr = ((Float) switchExpr).intValue();  // Convert to int
+    //     }
 
-        // Visit each case statement
-        List<CaseStatementContext> caseStatements = ctx.caseStatement();
-        boolean isMatched = false;
-        for (CaseStatementContext caseCtx : caseStatements) {
-            Object caseValue = visit(caseCtx.expression());
+    //     // Visit each case statement
+    //     List<CaseStatementContext> caseStatements = ctx.caseStatement();
+    //     boolean isMatched = false;
+    //     for (CaseStatementContext caseCtx : caseStatements) {
+    //         Object caseValue = visit(caseCtx.expression());
 
-            if (caseValue != null) {
-                // Convert case value to the appropriate type if necessary
-                if (caseValue instanceof String) {
-                    caseValue = caseValue.toString();  // Convert to string
-                } else if (caseValue instanceof Double) {
-                    caseValue = ((Double) caseValue).intValue();  // Convert to int
-                } else if (caseValue instanceof Float) {
-                    caseValue = ((Float) caseValue).intValue();  // Convert to int
-                }
+    //         if (caseValue != null) {
+    //             // Convert case value to the appropriate type if necessary
+    //             if (caseValue instanceof String) {
+    //                 caseValue = caseValue.toString();  // Convert to string
+    //             } else if (caseValue instanceof Double) {
+    //                 caseValue = ((Double) caseValue).intValue();  // Convert to int
+    //             } else if (caseValue instanceof Float) {
+    //                 caseValue = ((Float) caseValue).intValue();  // Convert to int
+    //             }
 
-                if (switchExpr.equals(caseValue)) {
-                    isMatched = true;
-                    // Execute the statements in the matched case
-                    List<StatementContext> statements = caseCtx.statement();
-                    for (StatementContext statementCtx : statements) {
-                        visitStatement(statementCtx);
-                    }
-                    break;  // Exit the loop after the first match
-                }
-            }
-        }
+    //             if (switchExpr.equals(caseValue)) {
+    //                 isMatched = true;
+    //                 // Execute the statements in the matched case
+    //                 List<StatementContext> statements = caseCtx.statement();
+    //                 for (StatementContext statementCtx : statements) {
+    //                     visitStatement(statementCtx);
+    //                 }
+    //                 break;  // Exit the loop after the first match
+    //             }
+    //         }
+    //     }
 
-        // If no case matches, check for the default statement
-        if (!isMatched) {
-            DefaultStatementContext defaultCtx = ctx.defaultStatement();
-            if (defaultCtx != null) {
-                // Execute the statements in the default case
-                List<StatementContext> statements = defaultCtx.statement();
-                for (StatementContext statementCtx : statements) {
-                    visitStatement(statementCtx);
-                }
-            }
-        }
-    }
+    //     // If no case matches, check for the default statement
+    //     if (!isMatched) {
+    //         DefaultStatementContext defaultCtx = ctx.defaultStatement();
+    //         if (defaultCtx != null) {
+    //             // Execute the statements in the default case
+    //             List<StatementContext> statements = defaultCtx.statement();
+    //             for (StatementContext statementCtx : statements) {
+    //                 visitStatement(statementCtx);
+    //             }
+    //         }
+    // //     }
+    // }
 
     return null; // Modify this line to return the desired object
 }
@@ -418,9 +418,9 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
     public Object visitDefaultStatement(functiveParser.DefaultStatementContext ctx) {
     System.out.println("Visited DefaultStatement: " + ctx.getText());
     // Visit each statement in the default block
-    for (StatementContext statementCtx : ctx.statement()) {
-        visitStatement(statementCtx);
-    }
+    // for (StatementContext statementCtx : ctx.statement()) {
+    //     visitStatement(statementCtx);
+    // }
         return null;
     }
 
@@ -430,26 +430,31 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
 
     
     // Visit each statement in the for loop
-    for (StatementContext statementCtx : ctx.statement()) {
-        visitStatement(statementCtx);
-    }
+    // for (StatementContext statementCtx : ctx.statement()) {
+    //     visitStatement(statementCtx);
+    // }
     
+
+
+
     return null;
     }
 
-//     @Override
-//     public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
-//     System.out.println("Visited WhileLoop: " + ctx.getText());
-//     // Visit the loop condition
-//     ExpressionContext condition = ctx.expression();
-//     visitExpression(condition);
-    
-//     // Visit each statement in the while loop
-//     for (StatementContext statementCtx : ctx.statement()) {
-//         visitStatement(statementCtx);
-//     }
-//     return null;
-//     } 
+    @Override
+    public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
+    System.out.println("Visited WhileLoop: " + ctx.getText());
+    Object value = visit(ctx.expression());
+        if(value.getClass() == Boolean.class){
+            while((Boolean)value){
+                Object result = visit(ctx.block());
+                if(result instanceof functiveParser.WhileLoopContext){
+                    return result;
+                }
+                value = visit(ctx.expression());
+            }
+        }
+        return null;
+    } 
 
 //     @Override
 //     public Object visitFunctionDeclaration(functiveParser.FunctionDeclarationContext ctx) {
@@ -691,10 +696,7 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
         return null;
     }
 
-    @Override
-    public Object visitIdentifierExpression(functiveParser.IdentifierExpressionContext ctx) {
-        return symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
-    }
+
 
     @Override
     public Object visitExpressionList(functiveParser.ExpressionListContext ctx) {
