@@ -35,8 +35,8 @@ assignment: IDENTIFIER '=' expression;
 
 // If statement
 ifStatement:
-	'if' '(' expression ')' '{' statement* '}' (
-		'else' '{' statement* '}'
+	'if' '(' expression ')' block (
+		'else' block 
 	)?;
 
 // Switch statement
@@ -48,21 +48,24 @@ caseStatement: 'case' expression ':' statement*;
 defaultStatement: 'default' ':' statement*;
 
 // For loop
-forLoop: 'for' '(' forControl ')' '{' statement* '}';
+forLoop: 'for' '(' forControl ')' block;
 forControl: (varDeclaration | assignment)? ';' expression? ';' expression?;
 
 // While loop
-whileLoop: 'while' '(' expression ')' '{' statement* '}';
+whileLoop: 'while' '(' expression ')' block;
 
 // Function Declaration
 functionDeclaration:
-	'phoonk' (TYPE | 'void') IDENTIFIER '(' parameters? ')' '{' statement* '}';
+	'phoonk' (TYPE | 'void') IDENTIFIER '(' parameters? ')' block;
 parameters: parameter (',' parameter)*;
 parameter: TYPE IDENTIFIER;
 
 // Function Call
 functionCall: IDENTIFIER '(' arguments? ')';
 arguments: expression (',' expression)*;
+
+// Block
+block: '{' statement* '}';
 
 // Print
 print: 'print' expression;
