@@ -6,7 +6,7 @@ import functive.functiveBaseVisitor;
 import functive.functiveParser;
 
 public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
-    public FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
+    private FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
 
     @Override
     public Object visitVarDeclaration(functiveParser.VarDeclarationContext ctx) {
@@ -305,14 +305,64 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitIfElseIfElseStatement(functiveParser.IfElseIfElseStatementContext ctx) {
+        // if the ifStatement visitor returns null, then the condition was false
+        Object condition = visit(ctx.ifStatement());
+
+        if ((boolean) condition == false) {
+            // there can be multiple elseif statements
+            for (var elseifStatement : ctx.elseifStatement()) {
+                // visit the elseif statement
+                condition = visit(elseifStatement); // will return null if none of the elseif conditions are ture
+                if ((boolean) condition == true) {
+                    return null;
+                }
+            }
+            if (ctx.elseStatement() != null)
+                visit(ctx.elseStatement());
+        }
+
+        return null;
+
+    }
+
+    @Override
     public Object visitIfStatement(functiveParser.IfStatementContext ctx) {
-        System.out.println("Visited IfStatement: " + ctx.getText());
+        // System.out.println("Visited IfStatement: " + ctx.getText());
 
         // Get the condition expression and evaluate it
         Object condition = visit(ctx.expression());
-        System.out.println("Condition: " + condition);
+        // System.out.println("Condition: " + condition);
 
-        return null;
+        if ((boolean) condition) {
+            visit(ctx.block());
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public Object visitElseifStatement(functiveParser.ElseifStatementContext ctx) {
+        // System.out.println("Visited elseifStatement: " + ctx.getText());
+
+        // Get the condition expression and evaluate it
+        Object condition = visit(ctx.expression());
+        // System.out.println("Condition: " + condition);
+
+        if ((boolean) condition) {
+            visit(ctx.block());
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public Object visitElseStatement(functiveParser.ElseStatementContext ctx) {
+        // System.out.println("Visited elseStatement: " + ctx.getText());
+
+        return visit(ctx.block());
     }
 
     @Override
@@ -321,7 +371,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object right = visit(ctx.expression(1));
 
         // check that left and right are numbers
-        if(!(left instanceof Number) || !(right instanceof Number))
+        if (!(left instanceof Number) || !(right instanceof Number))
             throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " > " + ctx.expression(1));
 
         // Compare the values of the left and right expressions
@@ -334,8 +384,9 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object right = visit(ctx.expression(1));
 
         // check that left and right are numbers
-        if(!(left instanceof Number) || !(right instanceof Number))
-            throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " >= " + ctx.expression(1));
+        if (!(left instanceof Number) || !(right instanceof Number))
+            throw new RuntimeException(
+                    "Invalid type for comparison: " + ctx.expression(0) + " >= " + ctx.expression(1));
 
         // Compare the values of the left and right expressions
         return ((Number) left).doubleValue() >= ((Number) right).doubleValue();
@@ -367,7 +418,7 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object right = visit(ctx.expression(1));
 
         // check that left and right are numbers
-        if(!(left instanceof Number) || !(right instanceof Number))
+        if (!(left instanceof Number) || !(right instanceof Number))
             throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " < " + ctx.expression(1));
 
         // Compare the values of the left and right expressions
@@ -380,8 +431,9 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object right = visit(ctx.expression(1));
 
         // check that left and right are numbers
-        if(!(left instanceof Number) || !(right instanceof Number))
-            throw new RuntimeException("Invalid type for comparison: " + ctx.expression(0) + " <= " + ctx.expression(1));
+        if (!(left instanceof Number) || !(right instanceof Number))
+            throw new RuntimeException(
+                    "Invalid type for comparison: " + ctx.expression(0) + " <= " + ctx.expression(1));
 
         // Compare the values of the left and right expressions
         return ((Number) left).doubleValue() <= ((Number) right).doubleValue();
@@ -389,13 +441,13 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitOrExpression(functiveParser.OrExpressionContext ctx) {
-        //System.out.println("Visited AndExpression: " + ctx.getText());
+        // System.out.println("Visited AndExpression: " + ctx.getText());
 
         // Visit the left and right expressions
         Object left = visit(ctx.expression(0));
         Object right = visit(ctx.expression(1));
 
-        //System.out.println("Left: " + left + ", Right: " + right);
+        // System.out.println("Left: " + left + ", Right: " + right);
 
         // check if left is 0 or 1 and right is 0 or 1, then cast them to boolean
         if (left instanceof Integer && right instanceof Integer) {
@@ -428,13 +480,13 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitAndExpression(functiveParser.AndExpressionContext ctx) {
-        //System.out.println("Visited AndExpression: " + ctx.getText());
+        // System.out.println("Visited AndExpression: " + ctx.getText());
 
         // Visit the left and right expressions
         Object left = visit(ctx.expression(0));
         Object right = visit(ctx.expression(1));
 
-        //System.out.println("Left: " + left + ", Right: " + right);
+        // System.out.println("Left: " + left + ", Right: " + right);
 
         // check if left is 0 or 1 and right is 0 or 1, then cast them to boolean
         if (left instanceof Integer && right instanceof Integer) {
@@ -541,5 +593,28 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         }
 
         return null;
+    }
+
+    @Override
+    public Object visitBlock(functiveParser.BlockContext ctx) {
+        // System.out.println("Visited Block: " + ctx.getText());
+        // printCurrentBlockVariablesAndValues();
+        symbolsTable.enterBlock();
+        // printCurrentBlockVariablesAndValues();
+        // visit all the statements in the block
+        for (functiveParser.StatementContext statementContext : ctx.statement()) {
+            visit(statementContext);
+        }
+        // printCurrentBlockVariablesAndValues();
+        symbolsTable.exitBlock();
+        // printCurrentBlockVariablesAndValues();
+        return null;
+    }
+
+    private void printCurrentBlockVariablesAndValues() {
+        System.out.println("Current block: ");
+        for (String key : symbolsTable.currentTable.keySet()) {
+            System.out.println(key + " = " + symbolsTable.currentTable.get(key));
+        }
     }
 }

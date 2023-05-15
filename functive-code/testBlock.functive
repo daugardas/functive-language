@@ -1,0 +1,34 @@
+float [] testFloatArrayAssignmentAlreadyDeclared = {1.2, 1.8, 1.4};
+
+//int [] testArrayAssignmentNotDeclared;
+//testArrayAssignmentNotDeclared = {7,8,9};
+
+if (1 == 1) {
+    int testIfTrue = 1;
+}
+
+if(1 == 0){
+    int testIfFalse = 2;
+}
+
+if(0 > 1){
+    int testIfGreaterFalse=1;
+} else if (0 > 55) {
+    int testElseIfGreaterFalse = 2;
+} else if (898 > 55){
+    int yes = 1;
+}
+else {
+    int hello = 0;
+    if(true){
+        int should_notvisithere = 0;
+    }
+}
+
+if(0 == 1){
+    int lol = 1;
+} else if (1 == 0){
+    int no = 1;
+}else {
+    int yes = 1;
+}
