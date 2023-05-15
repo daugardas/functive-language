@@ -398,8 +398,12 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitEqualExpression(functiveParser.EqualExpressionContext ctx) {
-        System.out.println("Visited EqualExpression: " + ctx.getText());
-        return super.visitEqualExpression(ctx);
+        // Visit the left and right expressions
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        // Compare the values of the left and right expressions
+        return left.equals(right);
     }
 
     @Override
