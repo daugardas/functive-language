@@ -1,18 +1,9 @@
 package org.functive;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import functive.functiveBaseVisitor;
 import functive.functiveParser;
-import functive.functiveParser.ArgumentsContext;
-import functive.functiveParser.CaseStatementContext;
-import functive.functiveParser.DefaultStatementContext;
-import functive.functiveParser.ExpressionContext;
-import functive.functiveParser.ForControlContext;
-import functive.functiveParser.ParameterContext;
-import functive.functiveParser.ParametersContext;
-import functive.functiveParser.StatementContext;
 
 public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     public FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
