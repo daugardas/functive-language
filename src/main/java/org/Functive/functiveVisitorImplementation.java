@@ -236,8 +236,9 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
             throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
         }
         // print out the array saved in the table
-        // for (var value : (ArrayList<?>) symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
-        //     System.out.println(value);
+        // for (var value : (ArrayList<?>)
+        // symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
+        // System.out.println(value);
         // }
         // System.out.println("Visited ArrayAssignment: " + ctx.getText());
         Object array = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
@@ -260,8 +261,9 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValues);
 
         // print out the array saved in the table
-        // for (var value : (ArrayList<?>) symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
-        //     System.out.println(value);
+        // for (var value : (ArrayList<?>)
+        // symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
+        // System.out.println(value);
         // }
         return null;
     }
@@ -305,13 +307,27 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     @Override
     public Object visitIfStatement(functiveParser.IfStatementContext ctx) {
         System.out.println("Visited IfStatement: " + ctx.getText());
-        return super.visitIfStatement(ctx);
+
+        // Get the condition expression and evaluate it
+        Object condition = visit(ctx.expression());
+        System.out.println("Condition: " + condition);
+
+        // // If the condition is true, visit the if block
+        // if (conditionResult) {
+        // return visit(ctx.ifBlock);
+        // }
+        // // Otherwise, visit the else block (if it exists)
+        // else if (ctx.elseBlock != null) {
+        // return visit(ctx.elseBlock);
+        // }
+
+        return null;
     }
 
     @Override
     public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
-        System.out.println("Visited SwitchStatement: " + ctx.getText());
-        return super.visitSwitchStatement(ctx);
+        // Retrieve the switch expression and case statement
+        return null;
     }
 
     @Override
@@ -363,7 +379,57 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitExpression(functiveParser.ExpressionContext ctx) {
+    public Object visitGreaterThanExpression(functiveParser.GreaterThanExpressionContext ctx) {
+        System.out.println("Visited GreaterThanExpression: " + ctx.getText());
+        return super.visitGreaterThanExpression(ctx);
+    }
+
+    @Override
+    public Object visitGreaterThanEqualExpression(functiveParser.GreaterThanEqualExpressionContext ctx) {
+        System.out.println("Visited GreaterThanEqualExpression: " + ctx.getText());
+        return super.visitGreaterThanEqualExpression(ctx);
+    }
+
+    @Override
+    public Object visitNotEqualExpression(functiveParser.NotEqualExpressionContext ctx) {
+        System.out.println("Visited NotEqualExpression: " + ctx.getText());
+        return super.visitNotEqualExpression(ctx);
+    }
+
+    @Override
+    public Object visitEqualExpression(functiveParser.EqualExpressionContext ctx) {
+        System.out.println("Visited EqualExpression: " + ctx.getText());
+        return super.visitEqualExpression(ctx);
+    }
+
+    @Override
+    public Object visitLessThanExpression(functiveParser.LessThanExpressionContext ctx) {
+        System.out.println("Visited LessThanExpression: " + ctx.getText());
+        return super.visitLessThanExpression(ctx);
+    }
+
+    @Override
+    public Object visitLessThanEqualExpression(functiveParser.LessThanEqualExpressionContext ctx) {
+        System.out.println("Visited LessThanEqualExpression: " + ctx.getText());
+        return super.visitLessThanEqualExpression(ctx);
+    }
+
+    @Override
+    public Object visitOrExpression(functiveParser.OrExpressionContext ctx) {
+        System.out.println("Visited OrExpression: " + ctx.getText());
+        return super.visitOrExpression(ctx);
+    }
+
+    @Override
+    public Object visitAndExpression(functiveParser.AndExpressionContext ctx) {
+        System.out.println("Visited AndExpression: " + ctx.getText());
+        return super.visitAndExpression(ctx);
+    }
+
+    // visits the literal expression, which is just one value which is either int,
+    // float, boolean, or string
+    @Override
+    public Object visitLiteralExpression(functiveParser.LiteralExpressionContext ctx) {
         if (ctx.literal().INTEGER() != null)
             return Integer.parseInt(ctx.literal().INTEGER().getText());
         else if (ctx.literal().FLOAT() != null)
@@ -378,15 +444,15 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitExpressionList(functiveParser.ExpressionListContext ctx) {
-        //System.out.println("Visited ExpressionList: " + ctx.getText());
-        //System.out.println(ctx.expression());
+        // System.out.println("Visited ExpressionList: " + ctx.getText());
+        // System.out.println(ctx.expression());
         // get the first elements type
         Object firstElement = visit(ctx.expression(0));
         Class<?> firstElementType = firstElement.getClass();
 
         // cycle through the rest of the elements and check if they are the same type,
         // and if they are, add them to the list, otherwise throw an error
-        if (ctx.expression().size() == 0) {
+        if (ctx.expression().isEmpty()) {
             return null;
         }
 
