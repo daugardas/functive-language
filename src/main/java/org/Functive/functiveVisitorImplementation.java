@@ -1,9 +1,11 @@
 package org.Functive;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import functive.functiveBaseVisitor;
 import functive.functiveParser;
+
 
 public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     public FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
@@ -325,84 +327,124 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
+public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
     System.out.println("Visited SwitchStatement: " + ctx.getText());
+
     // Retrieve the switch expression
     Object switchExpr = visit(ctx.expression());
-    System.out.println("test expr:" + switchExpr);
-    // functiveParser.ExpressionContext switchExpression = ctx.expression();
-    // Object switchValue = visitLiteralExpression(switchExpression);
 
-    // // Visit each case statement
-    // for (functiveParser.CaseStatementContext caseCtx : ctx.caseStatement()) {
-    //     functiveParser.ExpressionContext caseExpression = caseCtx.expression();
-    //     Object caseValue = visitExpression(caseExpression);
+    if (switchExpr != null) {
+        // Convert switch expression to the appropriate type if necessary
+        if (switchExpr instanceof String) {
+            switchExpr = switchExpr.toString();  // Convert to string
+        } else if (switchExpr instanceof Double) {
+            switchExpr = ((Double) switchExpr).intValue();  // Convert to int
+        } else if (switchExpr instanceof Float) {
+            switchExpr = ((Float) switchExpr).intValue();  // Convert to int
+        }
 
-    //     if (switchValue.equals(caseValue)) {
-    //         // Execute the statements in the matched case
-    //         List<functiveParser.StatementContext> statements = caseCtx.statement();
-    //         for (functiveParser.StatementContext statementCtx : statements) {
-    //             visitStatement(statementCtx);
-    //         }
-    //         return null; // Exit switch statement
-    //     }
-    // }
+        // Visit each case statement
+        List<CaseStatementContext> caseStatements = ctx.caseStatement();
+        boolean isMatched = false;
+        for (CaseStatementContext caseCtx : caseStatements) {
+            Object caseValue = visit(caseCtx.expression());
 
-    // // If no case matches, check for the default statement
-    // functiveParser.DefaultStatementContext defaultCtx = ctx.defaultStatement();
-    // if (defaultCtx != null) {
-    //     // Execute the statements in the default case
-    //     List<functiveParser.StatementContext> statements = defaultCtx.statement();
-    //     for (functiveParser.StatementContext statementCtx : statements) {
-    //         visitStatement(statementCtx);
-    //     }
-    //}
+            if (caseValue != null) {
+                // Convert case value to the appropriate type if necessary
+                if (caseValue instanceof String) {
+                    caseValue = caseValue.toString();  // Convert to string
+                } else if (caseValue instanceof Double) {
+                    caseValue = ((Double) caseValue).intValue();  // Convert to int
+                } else if (caseValue instanceof Float) {
+                    caseValue = ((Float) caseValue).intValue();  // Convert to int
+                }
 
-    return null;
+                if (switchExpr.equals(caseValue)) {
+                    isMatched = true;
+                    // Execute the statements in the matched case
+                    List<StatementContext> statements = caseCtx.statement();
+                    for (StatementContext statementCtx : statements) {
+                        visitStatement(statementCtx);
+                    }
+                    break;  // Exit the loop after the first match
+                }
+            }
+        }
+
+        // If no case matches, check for the default statement
+        if (!isMatched) {
+            DefaultStatementContext defaultCtx = ctx.defaultStatement();
+            if (defaultCtx != null) {
+                // Execute the statements in the default case
+                List<StatementContext> statements = defaultCtx.statement();
+                for (StatementContext statementCtx : statements) {
+                    visitStatement(statementCtx);
+                }
+            }
+        }
+    }
+
+    return null; // Modify this line to return the desired object
 }
 
 
-//     @Override
-//     public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
-//     System.out.println("Visited CaseStatement: " + ctx.getText());
-    
-//     // Retrieve the case expression
-//     ExpressionContext caseExpression = ctx.expression();
-//     Object caseValue = visitExpression(caseExpression);
-    
-//     // Visit each statement in the case block
-//     for (StatementContext statementCtx : ctx.statement()) {
-//         visitStatement(statementCtx);
-//     }
-//     return null;
-//     }
 
 
-//     @Override
-//     public Object visitDefaultStatement(functiveParser.DefaultStatementContext ctx) {
-//     System.out.println("Visited DefaultStatement: " + ctx.getText());
-//     // Visit each statement in the default block
-//     for (StatementContext statementCtx : ctx.statement()) {
-//         visitStatement(statementCtx);
-//     }
-//         return null;
-//     }
 
-//     @Override
-//     public Object visitForLoop(functiveParser.ForLoopContext ctx) {
-//     System.out.println("Visited ForLoop: " + ctx.getText());
+@Override
+public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
+    System.out.println("Visited CaseStatement: " + ctx.getText());
+
+    // Retrieve the case expression
+    Object caseExpression = visit(ctx.expression());
+
+    // Perform necessary operations with the case expression
+    if (caseExpression != null) {
+        System.out.println("Case Expression: " + caseExpression);
+
+        // Example operations: check if the case expression matches a specific value
+        if (caseExpression instanceof Integer) {
+            int value = (int) caseExpression;
+        } else if (caseExpression instanceof String) {
+            String value = (String) caseExpression;
+        }
+
+        // Add your specific code logic here
+        // For example:
+        // - Perform calculations or comparisons based on the case expression
+        // - Call other methods or perform actions specific to your language or application
+        // - Manipulate data or variables based on the case expression
+
+        // Example: Print a custom message based on the case expression
+        System.out.println("Custom message based on the case expression: " + caseExpression);
+    }
+
+    return null; // Modify this line to return the desired object
+}
+
+
+    @Override
+    public Object visitDefaultStatement(functiveParser.DefaultStatementContext ctx) {
+    System.out.println("Visited DefaultStatement: " + ctx.getText());
+    // Visit each statement in the default block
+    for (StatementContext statementCtx : ctx.statement()) {
+        visitStatement(statementCtx);
+    }
+        return null;
+    }
+
+    @Override
+    public Object visitForLoop(functiveParser.ForLoopContext ctx) {
+    System.out.println("Visited ForLoop: " + ctx.getText());
+
     
-//     // Visit the for control
-//     ForControlContext forControl = ctx.forControl();
-//     visitForControl(forControl);
+    // Visit each statement in the for loop
+    for (StatementContext statementCtx : ctx.statement()) {
+        visitStatement(statementCtx);
+    }
     
-//     // Visit each statement in the for loop
-//     for (StatementContext statementCtx : ctx.statement()) {
-//         visitStatement(statementCtx);
-//     }
-    
-//     return null;
-//     }
+    return null;
+    }
 
 //     @Override
 //     public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
@@ -521,6 +563,11 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     public Object visitLessThanExpression(functiveParser.LessThanExpressionContext ctx) {
         System.out.println("Visited LessThanExpression: " + ctx.getText());
         return super.visitLessThanExpression(ctx);
+    }
+
+    @Override
+    public Object visitIdentifierExpression(functiveParser.IdentifierExpressionContext ctx) {
+        return symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
     }
 
     @Override
