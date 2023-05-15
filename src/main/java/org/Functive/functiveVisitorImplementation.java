@@ -1,9 +1,18 @@
 package org.functive;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import functive.functiveBaseVisitor;
 import functive.functiveParser;
+import functive.functiveParser.ArgumentsContext;
+import functive.functiveParser.CaseStatementContext;
+import functive.functiveParser.DefaultStatementContext;
+import functive.functiveParser.ExpressionContext;
+import functive.functiveParser.ForControlContext;
+import functive.functiveParser.ParameterContext;
+import functive.functiveParser.ParametersContext;
+import functive.functiveParser.StatementContext;
 
 public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
     public FunctiveSymbolsTable symbolsTable = new FunctiveSymbolsTable();
@@ -310,57 +319,161 @@ public class FunctiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
-        System.out.println("Visited SwitchStatement: " + ctx.getText());
-        return super.visitSwitchStatement(ctx);
+    System.out.println("Visited SwitchStatement: " + ctx.getText());
+    // Retrieve the switch expression
+    ExpressionContext switchExpression = ctx.expression();
+    Object switchValue = visitExpression(switchExpression);
+    
+    // Visit each case statement
+    for (CaseStatementContext caseCtx : ctx.caseStatement()) {
+        ExpressionContext caseExpression = caseCtx.expression();
+        Object caseValue = visitExpression(caseExpression);
+        
+        if (switchValue.equals(caseValue)) {
+            // Execute the statements in the matched case
+            List<StatementContext> statements = caseCtx.statement();
+            for (StatementContext statementCtx : statements) {
+                visitStatement(statementCtx);
+            }
+            return null; // Exit switch statement
+        }
     }
+    // If no case matches, check for the default statement
+    DefaultStatementContext defaultCtx = ctx.defaultStatement();
+    if (defaultCtx != null) {
+        // Execute the statements in the default case
+        List<StatementContext> statements = defaultCtx.statement();
+        for (StatementContext statementCtx : statements) {
+            visitStatement(statementCtx);
+        }
+    }
+    
+    return null;
+    }
+
 
     @Override
     public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
-        System.out.println("Visited CaseStatement: " + ctx.getText());
-        return super.visitCaseStatement(ctx);
+    System.out.println("Visited CaseStatement: " + ctx.getText());
+    
+    // Retrieve the case expression
+    ExpressionContext caseExpression = ctx.expression();
+    Object caseValue = visitExpression(caseExpression);
+    
+    // Visit each statement in the case block
+    for (StatementContext statementCtx : ctx.statement()) {
+        visitStatement(statementCtx);
     }
+    return null;
+    }
+
 
     @Override
     public Object visitDefaultStatement(functiveParser.DefaultStatementContext ctx) {
-        System.out.println("Visited DefaultStatement: " + ctx.getText());
-        return super.visitDefaultStatement(ctx);
+    System.out.println("Visited DefaultStatement: " + ctx.getText());
+    // Visit each statement in the default block
+    for (StatementContext statementCtx : ctx.statement()) {
+        visitStatement(statementCtx);
+    }
+        return null;
     }
 
     @Override
     public Object visitForLoop(functiveParser.ForLoopContext ctx) {
-        System.out.println("Visited ForLoop: " + ctx.getText());
-        return super.visitForLoop(ctx);
+    System.out.println("Visited ForLoop: " + ctx.getText());
+    
+    // Visit the for control
+    ForControlContext forControl = ctx.forControl();
+    visitForControl(forControl);
+    
+    // Visit each statement in the for loop
+    for (StatementContext statementCtx : ctx.statement()) {
+        visitStatement(statementCtx);
+    }
+    
+    return null;
     }
 
     @Override
     public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
-        System.out.println("Visited WhileLoop: " + ctx.getText());
-        return super.visitWhileLoop(ctx);
+    System.out.println("Visited WhileLoop: " + ctx.getText());
+    // Visit the loop condition
+    ExpressionContext condition = ctx.expression();
+    visitExpression(condition);
+    
+    // Visit each statement in the while loop
+    for (StatementContext statementCtx : ctx.statement()) {
+        visitStatement(statementCtx);
     }
+    return null;
+    } 
 
     @Override
     public Object visitFunctionDeclaration(functiveParser.FunctionDeclarationContext ctx) {
-        System.out.println("Visited FunctionDeclaration: " + ctx.getText());
-        return super.visitFunctionDeclaration(ctx);
+    System.out.println("Visited FunctionDeclaration: " + ctx.getText());
+    
+    // Retrieve function details
+    String returnType = ctx.TYPE() != null ? ctx.TYPE().getText() : "void";
+    String functionName = ctx.IDENTIFIER().getText();
+    
+    // Visit function parameters
+    ParametersContext parametersCtx = ctx.parameters();
+    if (parametersCtx != null) {
+        List<ParameterContext> parameterList = parametersCtx.parameter();
+        for (ParameterContext parameterCtx : parameterList) {
+            visitParameter(parameterCtx);
+        }
+    }
+    
+    // Visit function body statements
+    List<StatementContext> statementList = ctx.statement();
+    for (StatementContext statementCtx : statementList) {
+        visitStatement(statementCtx);
+    }
+    
+    return null;
     }
 
     @Override
     public Object visitFunctionCall(functiveParser.FunctionCallContext ctx) {
-        System.out.println("Visited FunctionCall: " + ctx.getText());
-        return super.visitFunctionCall(ctx);
+    System.out.println("Visited FunctionCall: " + ctx.getText());
+    // Retrieve function call details
+    String functionName = ctx.IDENTIFIER().getText();
+    // Visit function call arguments
+    ArgumentsContext argumentsCtx = ctx.arguments();
+    if (argumentsCtx != null) {
+        List<ExpressionContext> argumentList = argumentsCtx.expression();
+        for (ExpressionContext argumentCtx : argumentList) {
+            visitExpression(argumentCtx);
+        }
     }
+    return null;
+    }
+
 
     @Override
     public Object visitPrint(functiveParser.PrintContext ctx) {
-        System.out.println("Visited Print: " + ctx.getText());
-        return super.visitPrint(ctx);
-    }
-
+    System.out.println("Visited Print: " + ctx.getText());
+    
+    // Visit the expression to be printed
+    ExpressionContext expressionCtx = ctx.expression();
+    visitExpression(expressionCtx);
+    
+    return null;
+}
+    
     @Override
     public Object visitReturnStatement(functiveParser.ReturnStatementContext ctx) {
-        System.out.println("Visited ReturnStatement: " + ctx.getText());
-        return super.visitReturnStatement(ctx);
+    System.out.println("Visited ReturnStatement: " + ctx.getText());
+
+    // Visit the expression to be returned
+    ExpressionContext expressionCtx = ctx.expression();
+    if (expressionCtx != null) {
+        visitExpression(expressionCtx);
     }
+
+    return null;
+}
 
     @Override
     public Object visitExpression(functiveParser.ExpressionContext ctx) {
