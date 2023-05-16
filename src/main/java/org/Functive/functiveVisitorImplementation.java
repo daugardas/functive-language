@@ -170,42 +170,35 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
             throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
         }
 
-        // check the type of the variable and the expression, and assign the value
-        Object variable = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+        Object newValue = visit(ctx.expression());
+        Object prevValue = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
 
-        if (variable instanceof Integer) {
-            // check if expression is an integer
-            try {
-                Integer intValue = Integer.parseInt(ctx.expression().getText());
-                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(
-                        "Invalid value for " + ctx.IDENTIFIER().getText() + ": " + ctx.expression().getText());
-            }
-        } else if (variable instanceof Float) {
-            // check if expression is a float
-            try {
-                Float floatValue = Float.parseFloat(ctx.expression().getText());
-                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(
-                        "Invalid value for " + ctx.IDENTIFIER().getText() + ": " + ctx.expression().getText());
-            }
-        } else if (variable instanceof Boolean) {
-            // check if expression is a boolean
-            if (ctx.expression().getText().equals("true") || ctx.expression().getText().equals("false")) {
-                Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
-                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
-            } else {
-                throw new RuntimeException(
-                        "Invalid value for " + ctx.IDENTIFIER().getText() + ": " + ctx.expression().getText());
-            }
-        } else if (variable instanceof String) {
-            // check if expression is a string
-            String stringValue = ctx.expression().getText().replace("\"", "");
-            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
+        // check if prevValue is the same type as newValue
+        if (prevValue instanceof Integer && newValue instanceof Integer) {
+            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValue);
+        } else if (prevValue instanceof Float && newValue instanceof Float) {
+            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValue);
+        } else if (prevValue instanceof Boolean && newValue instanceof Boolean) {
+            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValue);
+        } else if (prevValue instanceof String && newValue instanceof String) {
+            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValue);
         } else {
-            throw new RuntimeException("Unknown type: " + variable.getClass());
+            throw new RuntimeException("Invalid type for variable: " + ctx.IDENTIFIER().getText());
+        }
+
+        try {
+            // put the newValue to the variable
+            symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValue);
+        } catch (UnsupportedOperationException e) {
+            throw new RuntimeException("UnsupportedOperationException: " + ctx.IDENTIFIER().getText());
+        } catch (ClassCastException e) {
+            throw new RuntimeException("ClassCastException: " + ctx.IDENTIFIER().getText());
+        } catch (NullPointerException e) {
+            throw new RuntimeException("NullPointerException: " + ctx.IDENTIFIER().getText());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("IllegalArgumentException: " + ctx.IDENTIFIER().getText());
+        } catch (Exception e) {
+            throw new RuntimeException("Exception: " + ctx.IDENTIFIER().getText());
         }
 
         return null;
@@ -462,15 +455,12 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
-        System.out.println("Visited WhileLoop: " + ctx.getText());
-        Object value = visit(ctx.expression());
-        if (value.getClass() == Boolean.class) {
-            while ((Boolean) value) {
-                Object result = visit(ctx.block());
-                if (result instanceof functiveParser.WhileLoopContext) {
-                    return result;
-                }
-                value = visit(ctx.expression());
+        //System.out.println("Visited WhileLoop: " + ctx.getText());
+        Object controlExpression = visit(ctx.expression());
+        if (controlExpression instanceof Boolean) {
+            while ((Boolean) controlExpression) {
+                visit(ctx.block());
+                controlExpression = visit(ctx.expression());
             }
         }
         return null;
@@ -748,18 +738,26 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitBlock(functiveParser.BlockContext ctx) {
-        // System.out.println("Visited Block: " + ctx.getText());
-        // printCurrentBlockVariablesAndValues();
+        //System.out.println("Visited Block: " + ctx.getText());
+        //printCurrentBlockVariablesAndValues();
         symbolsTable.enterBlock();
-        // printCurrentBlockVariablesAndValues();
+        //printCurrentBlockVariablesAndValues();
         // visit all the statements in the block
         for (functiveParser.StatementContext statementContext : ctx.statement()) {
+            //System.out.println("Visiting statement: " + statementContext.getText());
             visit(statementContext);
         }
-        // printCurrentBlockVariablesAndValues();
+        //printCurrentBlockVariablesAndValues();
         symbolsTable.exitBlock();
-        // printCurrentBlockVariablesAndValues();
+        //printCurrentBlockVariablesAndValues();
         return null;
+    }
+
+    private void printCurrentBlockVariablesAndValues() {
+        System.out.println("Current block variables and values:");
+        for (String variable : symbolsTable.currentTable.keySet()) {
+            System.out.println(variable + ": " + symbolsTable.currentTable.get(variable));
+        }
     }
 
     @Override
