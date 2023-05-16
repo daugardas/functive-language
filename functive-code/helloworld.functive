@@ -34,14 +34,12 @@ if (1 == 1) {
     int testIf = 1;
 }
 
-<<<<<<< HEAD
 int a = 5;
 switch(a == 5)
 {
     
 
 }
-=======
 int testEqual = 1;
 if(testEqual == testEqual){
 
@@ -129,4 +127,3 @@ if(4.5 <= 4.5){
 if (4.5 > 4.6){
     
 }
->>>>>>> d5d9151a0e6a965ac3397638b76913fc899d77ff
