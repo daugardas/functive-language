@@ -65,7 +65,8 @@ parameter: TYPE IDENTIFIER;
 
 // Function Call
 functionCall: IDENTIFIER '(' arguments? ')';
-arguments: expression (',' expression)*;
+arguments: argument (',' argument)*;
+argument: IDENTIFIER | expression;
 
 // Block
 block: '{' statement* '}';

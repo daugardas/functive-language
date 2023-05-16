@@ -1,5 +1,6 @@
 package org.functive;
 
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,57 +12,71 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitVarDeclaration(functiveParser.VarDeclarationContext ctx) {
+        if (symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
+            throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
+        }
+
         // check if the var declaration has a value
         if (ctx.expression() != null) {
-            // var declaration with value
-            if (symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
-                throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
+            Object value = visit(ctx.expression());
+
+            try {
+                symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), value);
+                return null;
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid value for variable: " + ctx.IDENTIFIER().getText());
             }
 
             // System.out.println("TYPE: " + ctx.TYPE().getText());
-            switch (ctx.TYPE().getText()) {
-                case "int" -> {
-                    // because this should be an integer, we will try to convert the value to an
-                    // integer
-                    try {
-                        Integer intValue = Integer.parseInt(ctx.expression().getText());
-                        // System.out.println("intValue: " + intValue);
-                        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
-                    } catch (NumberFormatException e) {
-                        throw new RuntimeException("Invalid value for int: " + ctx.expression().getText());
-                    }
-                }
-                case "float" -> {
-                    // because this should be a float, we will try to convert the value to a float
-                    try {
-                        Float floatValue = Float.parseFloat(ctx.expression().getText());
-                        // System.out.println("floatValue: " + floatValue);
-                        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
-                    } catch (NumberFormatException e) {
-                        throw new RuntimeException("Invalid value for float: " + ctx.expression().getText());
-                    }
-                }
-                case "boolean" -> {
-                    // because this should be a boolean, we will try to convert the value to a
-                    // boolean
-                    if (ctx.expression().getText().equals("true") || ctx.expression().getText().equals("false")) {
-                        Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
-                        // System.out.println("boolValue: " + boolValue);
-                        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
-                    } else {
-                        throw new RuntimeException("Invalid value for boolean: " + ctx.expression().getText());
-                    }
-                }
-                case "string" -> {
-                    // because this should be a string, we will try to convert the value to a string
-                    String stringValue = ctx.expression().getText().replace("\"", "");
-                    // System.out.println("stringValue: " + stringValue);
-                    symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
-                }
-                default -> {
-                    throw new RuntimeException("Unknown type: " + ctx.TYPE().getText());
-                }
-            }
+            // switch (ctx.TYPE().getText()) {
+            // case "int" -> {
+            // // because this should be an integer, we will try to convert the value to an
+            // // integer
+            // try {
+            // Integer intValue = Integer.parseInt(ctx.expression().getText());
+            // // System.out.println("intValue: " + intValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
+            // } catch (NumberFormatException e) {
+            // throw new RuntimeException("Invalid value for int: " +
+            // ctx.expression().getText());
+            // }
+            // }
+            // case "float" -> {
+            // // because this should be a float, we will try to convert the value to a
+            // float
+            // try {
+            // Float floatValue = Float.parseFloat(ctx.expression().getText());
+            // // System.out.println("floatValue: " + floatValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
+            // } catch (NumberFormatException e) {
+            // throw new RuntimeException("Invalid value for float: " +
+            // ctx.expression().getText());
+            // }
+            // }
+            // case "boolean" -> {
+            // // because this should be a boolean, we will try to convert the value to a
+            // // boolean
+            // if (ctx.expression().getText().equals("true") ||
+            // ctx.expression().getText().equals("false")) {
+            // Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
+            // // System.out.println("boolValue: " + boolValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
+            // } else {
+            // throw new RuntimeException("Invalid value for boolean: " +
+            // ctx.expression().getText());
+            // }
+            // }
+            // case "string" -> {
+            // // because this should be a string, we will try to convert the value to a
+            // string
+            // String stringValue = ctx.expression().getText().replace("\"", "");
+            // // System.out.println("stringValue: " + stringValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
+            // }
+            // default -> {
+            // throw new RuntimeException("Unknown type: " + ctx.TYPE().getText());
+            // }
+            // }
         } else {
             // set the default values for the variable
             switch (ctx.TYPE().getText()) {
@@ -340,11 +355,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
-        //System.out.println("Visited SwitchStatement: " + ctx.getText());
+        // System.out.println("Visited SwitchStatement: " + ctx.getText());
 
         // Retrieve the switch expression
         Object switchExpr = visit(ctx.expression());
-        //System.out.println("Switch expression: " + switchExpr);
+        // System.out.println("Switch expression: " + switchExpr);
 
         // check if case statements exist
         if (ctx.caseStatement(0) == null && ctx.defaultStatement() == null)
@@ -354,14 +369,14 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         for (var caseStatement : ctx.caseStatement()) {
             // get the case value
             Object caseValue = visit(caseStatement.expression());
-            //System.out.println("Case value: " + caseValue);
+            // System.out.println("Case value: " + caseValue);
 
             // check if the case value is the same as the switch expression
             if (switchExpr.equals(caseValue)) {
                 // returns false if break statement is reached, otherwise
                 // returns true
                 boolean resultOfCase = (boolean) visit(caseStatement);
-                //System.out.println("Result of case: " + resultOfCase);
+                // System.out.println("Result of case: " + resultOfCase);
                 if (!resultOfCase) {
                     return null;
                 }
@@ -379,7 +394,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
-        //System.out.println("Visited CaseStatement: " + ctx.getText());
+        // System.out.println("Visited CaseStatement: " + ctx.getText());
 
         // enter block scope
         symbolsTable.enterBlock();
@@ -403,7 +418,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitDefaultStatement(functiveParser.DefaultStatementContext ctx) {
-        //System.out.println("Visited DefaultStatement: " + ctx.getText());
+        // System.out.println("Visited DefaultStatement: " + ctx.getText());
         // enter block scope
         symbolsTable.enterBlock();
 
@@ -463,30 +478,69 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitFunctionDeclaration(functiveParser.FunctionDeclarationContext ctx) {
-        System.out.println("Visited FunctionDeclaration: " + ctx.getText());
-
-        // Retrieve function details
-        String returnType = ctx.TYPE() != null ? ctx.TYPE().getText() : "void";
         String functionName = ctx.IDENTIFIER().getText();
+        String returnType = ctx.TYPE() != null ? ctx.TYPE().getText() : "void";
 
-        // Visit function parameters TODO
+        List<PhoonkParameter> parameters = new ArrayList<>();
+        if (ctx.parameters() != null) {
+            for (functiveParser.ParameterContext parameterCtx : ctx.parameters().parameter()) {
+                String parameterName = parameterCtx.IDENTIFIER().getText();
+                String parameterType = parameterCtx.TYPE().getText();
+                parameters.add(new PhoonkParameter(parameterName, parameterType));
+            }
+        }
 
-        // Visit function body statements TODO
+        Phoonk phoonk = new Phoonk(functionName, returnType, ctx.block(), parameters);
 
-        // - Process function details and parameters
-        // - Perform any necessary actions or validations
-
+        symbolsTable.currentTable.put(functionName, phoonk);
         return null;
     }
 
     @Override
     public Object visitFunctionCall(functiveParser.FunctionCallContext ctx) {
-        System.out.println("Visited FunctionCall: " + ctx.getText());
-        // Retrieve function call details
-        String functionName = ctx.IDENTIFIER().getText();
+        // check if function exists by checking if function name is in the current table
+        // and if it is a Phoonk object
+        if (!symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())
+                && !(symbolsTable.currentTable.get(ctx.IDENTIFIER().getText()) instanceof Phoonk))
+            throw new RuntimeException("Function " + ctx.IDENTIFIER().getText() + " does not exist");
 
-        // Visit function call arguments
+        // get the Phoonk object from the current table
+        Phoonk phoonk = (Phoonk) symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
 
+        // check if the number of arguments passed in the function call is the same as
+        // in the function declaration
+        if (ctx.arguments() != null && ctx.arguments().argument().size() != phoonk.getParameterCount())
+            throw new RuntimeException("Invalid number of arguments passed in function call");
+
+        // enter the function scope
+        symbolsTable.enterBlock();
+
+        // add the arguments to the function scope
+        if (ctx.arguments() != null) {
+            for (int i = 0; i < ctx.arguments().argument().size(); i++) {
+                PhoonkParameter parameter = phoonk.getParameter(i);
+
+                // check if argument is identifier or expression
+                if (ctx.arguments().argument(i).expression() != null) {
+                    Object argumentValue = visit(ctx.arguments().argument(i).expression());
+                    symbolsTable.currentTable.put(parameter.getName(), argumentValue);
+                } else {
+                    String argumentName = ctx.arguments().argument(i).getText();
+                    Object argumentValue = symbolsTable.currentTable.get(argumentName);
+                    symbolsTable.currentTable.put(parameter.getName(), argumentValue);
+                }
+            }
+        }
+
+        // execute the scoped block
+        Object returnValue = visit(phoonk.getBody());
+
+        // exit the function scope
+        symbolsTable.exitBlock();
+
+        if (!phoonk.getReturnType().equals("void")) {
+            return returnValue;
+        }
         return null;
     }
 
@@ -742,14 +796,23 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         symbolsTable.enterBlock();
         // printCurrentBlockVariablesAndValues();
         // visit all the statements in the block
+
+        Object returnValue = null;
         for (functiveParser.StatementContext statementContext : ctx.statement()) {
             // System.out.println("Visiting statement: " + statementContext.getText());
+            // check if the current statement is a return statement, if it is, then return
+
+            if (statementContext.returnStatement() != null) {
+                returnValue = visit(statementContext.returnStatement());
+                break;
+            }
+
             visit(statementContext);
         }
         // printCurrentBlockVariablesAndValues();
         symbolsTable.exitBlock();
         // printCurrentBlockVariablesAndValues();
-        return null;
+        return returnValue;
     }
 
     private void printCurrentBlockVariablesAndValues() {
