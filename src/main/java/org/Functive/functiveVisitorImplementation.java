@@ -52,14 +52,12 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
                 throw new RuntimeException("Variable already declared: " + ctx.IDENTIFIER().getText());
             }
 
-            // System.out.println("TYPE: " + ctx.TYPE().getText());
             switch (ctx.TYPE().getText()) {
                 case "int" -> {
                     array = new ArrayList<Integer>();
                     for (var expression : ctx.expressionList().expression()) {
                         try {
                             Integer intValue = Integer.parseInt(expression.getText());
-                            // System.out.println("intValue: " + intValue);
                             ((ArrayList<Integer>) array).add(intValue);
                         } catch (NumberFormatException e) {
                             throw new RuntimeException("Invalid value for int: " + expression.getText());
@@ -71,7 +69,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     for (var expression : ctx.expressionList().expression()) {
                         try {
                             Float floatValue = Float.parseFloat(expression.getText());
-                            // System.out.println("floatValue: " + floatValue);
                             ((ArrayList<Float>) array).add(floatValue);
                         } catch (NumberFormatException e) {
                             throw new RuntimeException("Invalid value for float: " + expression.getText());
@@ -83,7 +80,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     for (var expression : ctx.expressionList().expression()) {
                         if (expression.getText().equals("true") || expression.getText().equals("false")) {
                             Boolean boolValue = Boolean.parseBoolean(expression.getText());
-                            // System.out.println("boolValue: " + boolValue);
                             ((ArrayList<Boolean>) array).add(boolValue);
                         } else {
                             throw new RuntimeException("Invalid value for boolean: " + expression.getText());
@@ -94,7 +90,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     array = new ArrayList<String>();
                     for (var expression : ctx.expressionList().expression()) {
                         String stringValue = expression.getText().replace("\"", "");
-                        // System.out.println("stringValue: " + stringValue);
                         ((ArrayList<String>) array).add(stringValue);
                     }
                 }
@@ -174,12 +169,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         if (!symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
             throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
         }
-        // print out the array saved in the table
-        // for (var value : (ArrayList<?>)
-        // symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
-        // System.out.println(value);
-        // }
-        // System.out.println("Visited ArrayAssignment: " + ctx.getText());
+
         Object array = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
         Class<?> arrayType = null;
         if (!((ArrayList<?>) array).isEmpty()) {
@@ -192,18 +182,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
             newValuesType = ((ArrayList<?>) newValues).get(0).getClass();
         }
 
-        // System.out.println(arrayType);
-
         if (arrayType != null && arrayType != newValuesType)
             throw new RuntimeException("Invalid type for array: " + ctx.IDENTIFIER().getText());
 
         symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), newValues);
 
-        // print out the array saved in the table
-        // for (var value : (ArrayList<?>)
-        // symbolsTable.currentTable.get(ctx.IDENTIFIER().getText())) {
-        // System.out.println(value);
-        // }
         return null;
     }
 
@@ -213,7 +196,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         if (!symbolsTable.currentTable.containsKey(ctx.arrayAccess().IDENTIFIER().getText())) {
             throw new RuntimeException("Variable not declared: " + ctx.arrayAccess().IDENTIFIER().getText());
         }
-        // System.out.println("Visited ArrayAccessAssignment: " + ctx.getText());
         Object array = symbolsTable.currentTable.get(ctx.arrayAccess().IDENTIFIER().getText());
         Class<?> arrayType = null;
         if (!((ArrayList<?>) array).isEmpty()) {
@@ -256,22 +238,37 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
             throw new RuntimeException("Variable not declared: " + ctx.arrayAccess().IDENTIFIER().getText());
         }
         Object array = symbolsTable.currentTable.get(ctx.arrayAccess().IDENTIFIER().getText());
-        // check if array is a phoonk
         if (array instanceof Phoonk) {
-            Integer index = (Integer) visit(ctx.arrayAccess().expression());
             array = symbolsTable.currentTablePhoonkResultValues.get(ctx.arrayAccess().IDENTIFIER().getText());
-            if (index < 0 || index >= ((ArrayList<?>) array).size()) {
-                throw new IndexOutOfBoundsException("Index out of bounds: " + index);
-            }
-            return ((ArrayList<?>) array).get(index);
         } else {
-            // check if the index is in the bounds of the array
-            Integer index = (Integer) visit(ctx.arrayAccess().expression());
-            if (index < 0 || index >= ((ArrayList<?>) array).size()) {
-                throw new IndexOutOfBoundsException("Index out of bounds: " + index);
-            }
-            return ((ArrayList<?>) array).get(index);
+            array = symbolsTable.currentTable.get(ctx.arrayAccess().IDENTIFIER().getText());
         }
+        Integer index = (Integer) visit(ctx.arrayAccess().expression());
+        // our second unique attribute of the language is that we can have array indexes
+        // that are negative, and larger than the size of the array
+        // firstly we have to check if the index is positive
+        if (index >= 0) {
+            // then we just have to use modulus operation to get the correct index of the
+            // array
+            index = (index) % ((ArrayList<?>) array).size();
+        } else {
+            // if the index is negative, then that means we want to get the elements from
+            // the end of the array
+            // so if the array has 5 elements, and we want to get the last element, we have
+            // to use index -1
+            // if we want to get the second last element, we have to use index -2, and so on
+            // we still have to use modulus operation to get the correct index of the array
+            int size = ((ArrayList<?>) array).size();
+            int offset;
+
+            if (index * -1 > size) {
+                offset = index * -1 % size;
+            } else {
+                offset = index * -1;
+            }
+            index = size - offset;
+        }
+        return ((ArrayList<?>) array).get(index);
     }
 
     @Override
@@ -297,11 +294,8 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitIfStatement(functiveParser.IfStatementContext ctx) {
-        // System.out.println("Visited IfStatement: " + ctx.getText());
-
         // Get the condition expression and evaluate it
         Object condition = visit(ctx.expression());
-        // System.out.println("Condition: " + condition);
 
         if ((boolean) condition) {
             visit(ctx.block());
@@ -313,11 +307,9 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitElseifStatement(functiveParser.ElseifStatementContext ctx) {
-        // System.out.println("Visited elseifStatement: " + ctx.getText());
 
         // Get the condition expression and evaluate it
         Object condition = visit(ctx.expression());
-        // System.out.println("Condition: " + condition);
 
         if ((boolean) condition) {
             visit(ctx.block());
@@ -329,17 +321,13 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitElseStatement(functiveParser.ElseStatementContext ctx) {
-        // System.out.println("Visited elseStatement: " + ctx.getText());
         return visit(ctx.block());
     }
 
     @Override
     public Object visitSwitchStatement(functiveParser.SwitchStatementContext ctx) {
-        // System.out.println("Visited SwitchStatement: " + ctx.getText());
-
         // Retrieve the switch expression
         Object switchExpr = visit(ctx.expression());
-        // System.out.println("Switch expression: " + switchExpr);
 
         // check if case statements exist
         if (ctx.caseStatement(0) == null && ctx.defaultStatement() == null)
@@ -349,14 +337,12 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         for (var caseStatement : ctx.caseStatement()) {
             // get the case value
             Object caseValue = visit(caseStatement.expression());
-            // System.out.println("Case value: " + caseValue);
 
             // check if the case value is the same as the switch expression
             if (switchExpr.equals(caseValue)) {
                 // returns false if break statement is reached, otherwise
                 // returns true
                 boolean resultOfCase = (boolean) visit(caseStatement);
-                // System.out.println("Result of case: " + resultOfCase);
                 if (!resultOfCase) {
                     return null;
                 }
@@ -374,8 +360,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
-        // System.out.println("Visited CaseStatement: " + ctx.getText());
-
         // enter block scope
         symbolsTable.enterBlock();
 
@@ -398,7 +382,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitDefaultStatement(functiveParser.DefaultStatementContext ctx) {
-        // System.out.println("Visited DefaultStatement: " + ctx.getText());
         // enter block scope
         symbolsTable.enterBlock();
 
@@ -445,7 +428,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
-        // System.out.println("Visited WhileLoop: " + ctx.getText());
         Object controlExpression = visit(ctx.expression());
         if (controlExpression instanceof Boolean) {
             while ((Boolean) controlExpression) {
@@ -633,13 +615,9 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitOrExpression(functiveParser.OrExpressionContext ctx) {
-        // System.out.println("Visited AndExpression: " + ctx.getText());
-
         // Visit the left and right expressions
         Object left = visit(ctx.expression(0));
         Object right = visit(ctx.expression(1));
-
-        // System.out.println("Left: " + left + ", Right: " + right);
 
         // check if left is 0 or 1 and right is 0 or 1, then cast them to boolean
         if (left instanceof Integer && right instanceof Integer) {
@@ -672,13 +650,9 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitAndExpression(functiveParser.AndExpressionContext ctx) {
-        // System.out.println("Visited AndExpression: " + ctx.getText());
-
         // Visit the left and right expressions
         Object left = visit(ctx.expression(0));
         Object right = visit(ctx.expression(1));
-
-        // System.out.println("Left: " + left + ", Right: " + right);
 
         // check if left is 0 or 1 and right is 0 or 1, then cast them to boolean
         if (left instanceof Integer && right instanceof Integer) {
@@ -729,8 +703,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitExpressionList(functiveParser.ExpressionListContext ctx) {
-        // System.out.println("Visited ExpressionList: " + ctx.getText());
-        // System.out.println(ctx.expression());
         // get the first elements type
         Object firstElement = visit(ctx.expression(0));
         Class<?> firstElementType = firstElement.getClass();
@@ -784,15 +756,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitBlock(functiveParser.BlockContext ctx) {
-        // System.out.println("Visited Block: " + ctx.getText());
-        // printCurrentBlockVariablesAndValues();
         symbolsTable.enterBlock();
-        // printCurrentBlockVariablesAndValues();
         // visit all the statements in the block
 
         Object returnValue = null;
         for (functiveParser.StatementContext statementContext : ctx.statement()) {
-            // System.out.println("Visiting statement: " + statementContext.getText());
             // check if the current statement is a return statement, if it is, then return
 
             if (statementContext.returnStatement() != null) {
@@ -802,17 +770,8 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
             visit(statementContext);
         }
-        // printCurrentBlockVariablesAndValues();
         symbolsTable.exitBlock();
-        // printCurrentBlockVariablesAndValues();
         return returnValue;
-    }
-
-    private void printCurrentBlockVariablesAndValues() {
-        System.out.println("Current block variables and values:");
-        for (String variable : symbolsTable.currentTable.keySet()) {
-            System.out.println(variable + ": " + symbolsTable.currentTable.get(variable));
-        }
     }
 
     @Override

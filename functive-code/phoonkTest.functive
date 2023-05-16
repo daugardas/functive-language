@@ -53,12 +53,22 @@ phoonk int testPhoonkAnswer(int p){
     return p * 2;
 }
 
-int test = testPhoonkAnswer(2);
-print test; // 4 i masyva
+int test = testPhoonkAnswer(2); // 4 i masyva
+//print test; 
 
-print testPhoonkAnswer[0]; // 4
+//print testPhoonkAnswer[0]; // 4
 
 testPhoonkAnswer(5); // 10 i masyva
 
 print testPhoonkAnswer[0]; // 4
 print testPhoonkAnswer[1]; // 10
+
+print "should return -4: " + testPhoonkAnswer(-2); // -4 i masyva
+
+print "should return 10: " + testPhoonkAnswer[4]; // tik 3 elementai yra masyve
+
+print "should return -4: " + testPhoonkAnswer[-1];
+print "should return 10: " + testPhoonkAnswer[-2];
+print "should return 4: " + testPhoonkAnswer[-3];
+print "should return -4: " + testPhoonkAnswer[-4];
+print "should return 10: " + testPhoonkAnswer[-2];
