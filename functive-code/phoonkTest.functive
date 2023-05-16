@@ -1,0 +1,47 @@
+int a = 1;
+int b = 2;
+
+print "original b: " + b;
+
+phoonk int add10(int c){
+    return c + 10;
+}
+
+b = add10(b);
+
+print "Should add 10 to b: " + b;
+
+phoonk void printHelloWorld(){
+    print "Hello World!";
+}
+
+printHelloWorld();
+
+phoonk string getFullName(string firstName, string lastName){
+    return firstName + " " + lastName;
+}
+string fullName;
+fullName = getFullName("Test", "Func");
+print fullName;
+string fullNameTest = getFullName("Test1", "Func2");
+print fullNameTest;
+
+print getFullName("test", "print");
+
+phoonk void Fibonnacci(){
+    int n = 10;
+    print "starting fibonnaci test with n = " + n;
+
+    int first = 1;
+    int second = 0;
+    int fibonnacci = 1;
+    while(fibonnacci < n){
+        int prevSecond = second;
+        second = second + first;
+        first = prevSecond;
+        print "fibonnacci #" + fibonnacci + " = " + second;
+        fibonnacci = fibonnacci + 1;
+    }
+}
+
+Fibonnacci();
