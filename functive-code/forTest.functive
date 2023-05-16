@@ -1,0 +1,19 @@
+for (int i = 0; i < 10; i = i + 1){
+    print i;
+}
+
+// print i; // should print variable not declared
+
+//for (i = 0; i < 10; i = i + 1){ // should print variable not declared
+    //print i;
+//}
+
+int i = 0;
+for (i = 0; i < 10; i = i + 1){
+    print i;
+}
+
+//int a = 0;
+//for (int a = 0; a < 10; a = a + 1){ // should throw variable already declared error
+//    print a;
+//}

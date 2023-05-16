@@ -443,13 +443,32 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitForLoop(functiveParser.ForLoopContext ctx) {
-        System.out.println("Visited ForLoop: " + ctx.getText());
+        // enter the block scope
+        symbolsTable.enterBlock();
+        // Visit the initialization expression
+        boolean isVarDeclaration = ctx.forControl().varDeclaration() != null;
+        if (isVarDeclaration)
+            visit(ctx.forControl().varDeclaration());
+        else
+            visit(ctx.forControl().assignment(0));
 
-        // Visit each statement in the for loop
-        // for (StatementContext statementCtx : ctx.statement()) {
-        // visitStatement(statementCtx);
-        // }
+        // Visit the control expression
+        Object controlExpression = visit(ctx.forControl().expression());
 
+        // visit the block expression, if the control expression is true
+        if (controlExpression instanceof Boolean) {
+            while ((Boolean) controlExpression) {
+                visit(ctx.block());
+                if (isVarDeclaration)
+                    visit(ctx.forControl().assignment(0));
+                else
+                    visit(ctx.forControl().assignment(1));
+                controlExpression = visit(ctx.forControl().expression());
+            }
+        }
+
+        // exit the block scope
+        symbolsTable.exitBlock();
         return null;
     }
 

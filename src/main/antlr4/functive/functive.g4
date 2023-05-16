@@ -50,7 +50,7 @@ defaultStatement: 'default' ':' statement*;
 
 // For loop
 forLoop: 'for' '(' forControl ')' block;
-forControl: (varDeclaration | assignment)? ';' expression? ';' expression?;
+forControl: (varDeclaration | assignment) ';' expression ';' assignment;
 
 // While loop
 whileLoop: 'while' '(' expression ')' block;
@@ -91,10 +91,10 @@ expression:
 	| expression '||' expression	# orExpression
 	| expression '[' expression ']'	# arrayAccessExpression
 	//| expression '.' IDENTIFIER		# objectAccessExpression // we don't have objects
-	| '(' expression ')'			# parenthesisExpression
-	| literal						# literalExpression
-	| IDENTIFIER					# identifierExpression
-	| functionCall					# functionCallExpression;
+	| '(' expression ')'	# parenthesisExpression
+	| literal				# literalExpression
+	| IDENTIFIER			# identifierExpression
+	| functionCall			# functionCallExpression;
 literal: INTEGER | FLOAT | STRING | BOOLEAN;
 
 expressionList: expression (',' expression)*;
