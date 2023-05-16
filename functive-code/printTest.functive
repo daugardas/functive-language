@@ -1,0 +1,22 @@
+print "";
+print "123";
+print "test";
+print "test123";
+print 123456;
+print 1234.55;
+print true;
+print false;
+
+int testPrint1 = 99;
+float testPrint2 = 44.44;
+string testPrint3 = "test string";
+boolean testPrint4 = true;
+boolean testPrint5 = false;
+int [] testArrayPrint = [1,2,3,4,5,6]; // should throw an error
+
+print testPrint1;
+print testPrint2;
+print testPrint3;
+print testPrint4;
+print testPrint5;
+print testArrayPrint;

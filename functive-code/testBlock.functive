@@ -1,7 +1,7 @@
-float [] testFloatArrayAssignmentAlreadyDeclared = {1.2, 1.8, 1.4};
+float [] testFloatArrayAssignmentAlreadyDeclared = [1.2, 1.8, 1.4];
 
 //int [] testArrayAssignmentNotDeclared;
-//testArrayAssignmentNotDeclared = {7,8,9};
+//testArrayAssignmentNotDeclared = [7,8,9];
 
 if (1 == 1) {
     int testIfTrue = 1;

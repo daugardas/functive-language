@@ -24,12 +24,12 @@ varDeclaration: (TYPE | 'String') IDENTIFIER ('=' expression)?;
 
 // Array Declaration
 arrayDeclaration:
-	TYPE ('[' ']') IDENTIFIER ('=' '{' expressionList '}')?;
+	TYPE ('[' ']') IDENTIFIER ('=' '[' expressionList ']')?;
 
 // Assignment
 arrayAccessAssignment: IDENTIFIER arrayAccess '=' expression;
 arrayAccess: '[' expression ']';
-arrayAssignment: IDENTIFIER '=' '{' expressionList '}';
+arrayAssignment: IDENTIFIER '=' '[' expressionList ']';
 assignment: IDENTIFIER '=' expression;
 // arrayAccess is optional, because it means that we are specifying the index of the array
 

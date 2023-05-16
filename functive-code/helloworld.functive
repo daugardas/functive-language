@@ -6,13 +6,13 @@ boolean boolTest = true;
 boolean boolTest2;
 string stringTest = "test";
 string stringTest2;
-int [] testarray = {1,2,3};
+int [] testarray = [1,2,3];
 int [] testarray2;
-float [] testFloatArray = {1.2, 1.9};
+float [] testFloatArray = [1.2, 1.9];
 float [] testFloatArray2;
-boolean [] testBoolArray = {true, false, true};
+boolean [] testBoolArray = [true, false, true];
 boolean [] testBoolArray2;
-string [] testStringArray = {"test1", "test2"};
+string [] testStringArray = ["test1", "test2"];
 string [] testStringArray2;
 
 int testAssignemtAlreadyDeclared = 1;
@@ -20,15 +20,15 @@ testAssignemtAlreadyDeclared = 2;
 int testAssignmentNotDeclared = 1;
 testAssignmentNotDeclared = 2;
 
-int [] testArrayAssignmentAlreadyDeclared = {1,2,3};
+int [] testArrayAssignmentAlreadyDeclared = [1,2,3];
 testArrayAssignmentAlreadyDeclared[1] = 5;
-testArrayAssignmentAlreadyDeclared = {4,5,6};
+testArrayAssignmentAlreadyDeclared = [4,5,6];
 
-float [] testFloatArrayAssignmentAlreadyDeclared = {1.2, 1.8, 1.4};
-testFloatArrayAssignmentAlreadyDeclared = {1.44, 1.88};
+float [] testFloatArrayAssignmentAlreadyDeclared = [1.2, 1.8, 1.4];
+testFloatArrayAssignmentAlreadyDeclared = [1.44, 1.88];
 
 //int [] testArrayAssignmentNotDeclared;
-//testArrayAssignmentNotDeclared = {7,8,9};
+//testArrayAssignmentNotDeclared = [7,8,9];
 
 if (1 == 1) {
     int testIf = 1;
