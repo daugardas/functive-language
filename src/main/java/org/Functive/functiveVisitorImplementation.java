@@ -761,4 +761,88 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         // printCurrentBlockVariablesAndValues();
         return null;
     }
+
+    @Override
+    public Object visitParenthesisExpression(functiveParser.ParenthesisExpressionContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
+    public Object visitModulusExpression(functiveParser.ModulusExpressionContext ctx) {
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        if (left instanceof Integer && right instanceof Integer) {
+            return (int) left % (int) right;
+        } else if (left instanceof Float || right instanceof Float) {
+            return (float) left % (float) right;
+        } else {
+            throw new RuntimeException(
+                    "Invalid type for modulus operation: " + left.getClass() + " % " + right.getClass());
+        }
+    }
+
+    @Override
+    public Object visitMultiplyExpression(functiveParser.MultiplyExpressionContext ctx) {
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        if (left instanceof Integer && right instanceof Integer) {
+            return (int) left * (int) right;
+        } else if (left instanceof Float || right instanceof Float) {
+            return (float) left * (float) right;
+        } else {
+            throw new RuntimeException(
+                    "Invalid type for multiply operation: " + left.getClass() + " * " + right.getClass());
+        }
+    }
+
+    @Override
+    public Object visitDivideExpression(functiveParser.DivideExpressionContext ctx) {
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        if (left instanceof Integer && right instanceof Integer) {
+            return (int) left / (int) right;
+        } else if (left instanceof Float || right instanceof Float) {
+            return (float) left / (float) right;
+        } else {
+            throw new RuntimeException(
+                    "Invalid type for divide operation: " + left.getClass() + " / " + right.getClass());
+        }
+    }
+
+    @Override
+    public Object visitAddExpression(functiveParser.AddExpressionContext ctx) {
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        if (left instanceof Integer && right instanceof Integer) {
+            return (int) left + (int) right;
+        } else if (left instanceof String || right instanceof String) {
+            return left.toString() + right.toString();
+        } else if (left instanceof Float || right instanceof Float) {
+            return (float) left + (float) right;
+        } else if (left instanceof Boolean && right instanceof Boolean) {
+            return (boolean) left || (boolean) right;
+        } else {
+            throw new RuntimeException(
+                    "Invalid type for add operation: " + left.getClass() + " + " + right.getClass());
+        }
+    }
+
+    @Override
+    public Object visitSubtractExpression(functiveParser.SubtractExpressionContext ctx) {
+        Object left = visit(ctx.expression(0));
+        Object right = visit(ctx.expression(1));
+
+        if (left instanceof Integer && right instanceof Integer) {
+            return (int) left - (int) right;
+        } else if (left instanceof Float || right instanceof Float) {
+            return (float) left - (float) right;
+        } else {
+            throw new RuntimeException(
+                    "Invalid type for subtract operation: " + left.getClass() + " - " + right.getClass());
+        }
+    }
 }

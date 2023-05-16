@@ -90,7 +90,7 @@ expression:
 	| expression '&&' expression	# andExpression
 	| expression '||' expression	# orExpression
 	| expression '[' expression ']'	# arrayAccessExpression
-	| expression '.' IDENTIFIER		# objectAccessExpression
+	//| expression '.' IDENTIFIER		# objectAccessExpression // we don't have objects
 	| '(' expression ')'			# parenthesisExpression
 	| literal						# literalExpression
 	| IDENTIFIER					# identifierExpression
