@@ -105,7 +105,7 @@ expressionList: expression (',' expression)*;
 
 // Tokens
 TYPE: 'int' | 'float' | 'boolean' | 'void' | 'string';
-INTEGER: ('0' | [1-9][0-9]*);
+INTEGER: '-'? ('0' | [1-9][0-9]*);
 FLOAT: [0-9]* '.' [0-9]+;
 STRING: '"' ~[\r\n"]* '"';
 BOOLEAN: 'true' | 'false';
