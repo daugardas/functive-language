@@ -44,7 +44,7 @@ elseStatement: 'else' block;
 switchStatement:
 	'switch' '(' expression ')' '{' caseStatement* defaultStatement? '}';
 
-caseStatement: 'case' expression ':' statement*;
+caseStatement: 'case' expression ':' statement* ('break' ';')?;
 
 defaultStatement: 'default' ':' statement*;
 
