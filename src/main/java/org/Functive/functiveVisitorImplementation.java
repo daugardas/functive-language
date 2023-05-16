@@ -513,10 +513,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitReturnStatement(functiveParser.ReturnStatementContext ctx) {
-        System.out.println("Visited ReturnStatement: " + ctx.getText());
-        Object returnExpression = visit(ctx.expression());
-
-        return null;
+        return visit(ctx.expression());
     }
 
     @Override
