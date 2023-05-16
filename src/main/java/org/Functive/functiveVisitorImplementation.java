@@ -26,6 +26,57 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
             } catch (Exception e) {
                 throw new RuntimeException("Invalid value for variable: " + ctx.IDENTIFIER().getText());
             }
+
+            // System.out.println("TYPE: " + ctx.TYPE().getText());
+            // switch (ctx.TYPE().getText()) {
+            // case "int" -> {
+            // // because this should be an integer, we will try to convert the value to an
+            // // integer
+            // try {
+            // Integer intValue = Integer.parseInt(ctx.expression().getText());
+            // // System.out.println("intValue: " + intValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), intValue);
+            // } catch (NumberFormatException e) {
+            // throw new RuntimeException("Invalid value for int: " +
+            // ctx.expression().getText());
+            // }
+            // }
+            // case "float" -> {
+            // // because this should be a float, we will try to convert the value to a
+            // float
+            // try {
+            // Float floatValue = Float.parseFloat(ctx.expression().getText());
+            // // System.out.println("floatValue: " + floatValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), floatValue);
+            // } catch (NumberFormatException e) {
+            // throw new RuntimeException("Invalid value for float: " +
+            // ctx.expression().getText());
+            // }
+            // }
+            // case "boolean" -> {
+            // // because this should be a boolean, we will try to convert the value to a
+            // // boolean
+            // if (ctx.expression().getText().equals("true") ||
+            // ctx.expression().getText().equals("false")) {
+            // Boolean boolValue = Boolean.parseBoolean(ctx.expression().getText());
+            // // System.out.println("boolValue: " + boolValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), boolValue);
+            // } else {
+            // throw new RuntimeException("Invalid value for boolean: " +
+            // ctx.expression().getText());
+            // }
+            // }
+            // case "string" -> {
+            // // because this should be a string, we will try to convert the value to a
+            // string
+            // String stringValue = ctx.expression().getText().replace("\"", "");
+            // // System.out.println("stringValue: " + stringValue);
+            // symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), stringValue);
+            // }
+            // default -> {
+            // throw new RuntimeException("Unknown type: " + ctx.TYPE().getText());
+            // }
+            // }
         } else {
             // set the default values for the variable
             switch (ctx.TYPE().getText()) {
