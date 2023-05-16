@@ -17,7 +17,8 @@ statement:
 	| functionDeclaration
 	| functionCall ';'
 	| print ';'
-	| returnStatement ';';
+	| returnStatement ';'
+	| breakStatement ';';
 
 // Variable Declaration
 varDeclaration: (TYPE | 'String') IDENTIFIER ('=' expression)?;
@@ -44,7 +45,8 @@ elseStatement: 'else' block;
 switchStatement:
 	'switch' '(' expression ')' '{' caseStatement* defaultStatement? '}';
 
-caseStatement: 'case' expression ':' statement* ('break' ';')?;
+caseStatement: 'case' expression ':' statement*;
+breakStatement: 'break';
 
 defaultStatement: 'default' ':' statement*;
 
