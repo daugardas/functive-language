@@ -815,11 +815,4 @@ public Object visitCaseStatement(functiveParser.CaseStatementContext ctx) {
         // printCurrentBlockVariablesAndValues();
         return null;
     }
-
-    private void printCurrentBlockVariablesAndValues() {
-        System.out.println("Current block: ");
-        for (String key : symbolsTable.currentTable.keySet()) {
-            System.out.println(key + " = " + symbolsTable.currentTable.get(key));
-        }
-    }
 }
