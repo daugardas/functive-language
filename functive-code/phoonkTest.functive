@@ -45,3 +45,20 @@ phoonk void Fibonnacci(){
 }
 
 Fibonnacci();
+
+int [] testArray = [1,2,3,4,5];
+print "first element: " + testArray[0];
+
+phoonk int testPhoonkAnswer(int p){
+    return p * 2;
+}
+
+int test = testPhoonkAnswer(2);
+print test; // 4 i masyva
+
+print testPhoonkAnswer[0]; // 4
+
+testPhoonkAnswer(5); // 10 i masyva
+
+print testPhoonkAnswer[0]; // 4
+print testPhoonkAnswer[1]; // 10

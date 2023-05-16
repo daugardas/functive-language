@@ -28,8 +28,8 @@ arrayDeclaration:
 	TYPE ('[' ']') IDENTIFIER ('=' '[' expressionList ']')?;
 
 // Assignment
-arrayAccessAssignment: IDENTIFIER arrayAccess '=' expression;
-arrayAccess: '[' expression ']';
+arrayAccessAssignment: arrayAccess '=' expression;
+arrayAccess: IDENTIFIER'[' expression ']';
 arrayAssignment: IDENTIFIER '=' '[' expressionList ']';
 assignment: IDENTIFIER '=' expression;
 // arrayAccess is optional, because it means that we are specifying the index of the array
@@ -92,12 +92,13 @@ expression:
 	| expression '!=' expression	# notEqualExpression
 	| expression '&&' expression	# andExpression
 	| expression '||' expression	# orExpression
-	| expression '[' expression ']'	# arrayAccessExpression
 	//| expression '.' IDENTIFIER		# objectAccessExpression // we don't have objects
 	| '(' expression ')'	# parenthesisExpression
 	| literal				# literalExpression
 	| IDENTIFIER			# identifierExpression
-	| functionCall			# functionCallExpression;
+	| functionCall			# functionCallExpression
+	| arrayAccess			# arrayAccessExpression
+	| INTEGER				# integerExpression;
 literal: INTEGER | FLOAT | STRING | BOOLEAN;
 
 expressionList: expression (',' expression)*;

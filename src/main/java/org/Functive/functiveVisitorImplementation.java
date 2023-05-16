@@ -210,11 +210,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
     @Override
     public Object visitArrayAccessAssignment(functiveParser.ArrayAccessAssignmentContext ctx) {
         // check if the variable is declared
-        if (!symbolsTable.currentTable.containsKey(ctx.IDENTIFIER().getText())) {
-            throw new RuntimeException("Variable not declared: " + ctx.IDENTIFIER().getText());
+        if (!symbolsTable.currentTable.containsKey(ctx.arrayAccess().IDENTIFIER().getText())) {
+            throw new RuntimeException("Variable not declared: " + ctx.arrayAccess().IDENTIFIER().getText());
         }
         // System.out.println("Visited ArrayAccessAssignment: " + ctx.getText());
-        Object array = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+        Object array = symbolsTable.currentTable.get(ctx.arrayAccess().IDENTIFIER().getText());
         Class<?> arrayType = null;
         if (!((ArrayList<?>) array).isEmpty()) {
             arrayType = ((ArrayList<?>) array).get(0).getClass();
@@ -222,11 +222,10 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Integer index = (Integer) visit(ctx.arrayAccess().expression());
         Object value = visit(ctx.expression());
 
-        // System.out.println(arrayType);
-
         if (arrayType != null && arrayType != value.getClass())
-            throw new RuntimeException("Invalid type of assignment for " + ctx.IDENTIFIER().getText() + ": "
-                    + ctx.IDENTIFIER().getText());
+            throw new RuntimeException(
+                    "Invalid type of assignment for " + ctx.arrayAccess().IDENTIFIER().getText() + ": "
+                            + ctx.arrayAccess().IDENTIFIER().getText());
 
         if (value instanceof Integer)
             ((ArrayList<Integer>) array).set(index, (Integer) value);
@@ -239,8 +238,40 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         else
             throw new RuntimeException("Unknown type: " + value.getClass());
 
-        symbolsTable.currentTable.put(ctx.IDENTIFIER().getText(), array);
+        symbolsTable.currentTable.put(ctx.arrayAccess().IDENTIFIER().getText(), array);
         return null;
+    }
+
+    @Override
+    public Object visitArrayAccessExpression(functiveParser.ArrayAccessExpressionContext ctx) {
+        // it is possible that the identifier points to a phoonk array, so we have to
+        // firstly check if it at least exists in the symbols table, and then check if
+        // the variable points to a function, if not then we have to return the value
+        // from the symbols table, if yes then we have to return the value from the
+        // phoonk array
+
+        // check if the variable is declared
+
+        if (!symbolsTable.currentTable.containsKey(ctx.arrayAccess().IDENTIFIER().getText())) {
+            throw new RuntimeException("Variable not declared: " + ctx.arrayAccess().IDENTIFIER().getText());
+        }
+        Object array = symbolsTable.currentTable.get(ctx.arrayAccess().IDENTIFIER().getText());
+        // check if array is a phoonk
+        if (array instanceof Phoonk) {
+            Integer index = (Integer) visit(ctx.arrayAccess().expression());
+            array = symbolsTable.currentTablePhoonkResultValues.get(ctx.arrayAccess().IDENTIFIER().getText());
+            if (index < 0 || index >= ((ArrayList<?>) array).size()) {
+                throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+            }
+            return ((ArrayList<?>) array).get(index);
+        } else {
+            // check if the index is in the bounds of the array
+            Integer index = (Integer) visit(ctx.arrayAccess().expression());
+            if (index < 0 || index >= ((ArrayList<?>) array).size()) {
+                throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+            }
+            return ((ArrayList<?>) array).get(index);
+        }
     }
 
     @Override
@@ -428,6 +459,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
     @Override
     public Object visitFunctionDeclaration(functiveParser.FunctionDeclarationContext ctx) {
         String functionName = ctx.IDENTIFIER().getText();
+
+        // check if function name is already in the current table
+        if (symbolsTable.currentTable.containsKey(functionName))
+            throw new RuntimeException("Function " + functionName + " already exists");
+
         String returnType = ctx.TYPE() != null ? ctx.TYPE().getText() : "void";
 
         List<PhoonkParameter> parameters = new ArrayList<>();
@@ -441,7 +477,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
         Phoonk phoonk = new Phoonk(functionName, returnType, ctx.block(), parameters);
 
+        // our first unique attribute of the language is that each previous result
+        // returned by the function is stored in a variable with the function name
+        // this allows the user to see the previous results of the function
         symbolsTable.currentTable.put(functionName, phoonk);
+        symbolsTable.currentTablePhoonkResultValues.put(functionName, new ArrayList<Object>());
         return null;
     }
 
@@ -488,6 +528,10 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         symbolsTable.exitBlock();
 
         if (!phoonk.getReturnType().equals("void")) {
+            ArrayList<Object> results = symbolsTable.currentTablePhoonkResultValues
+                    .get(phoonk.getName());
+            results.add(returnValue);
+            symbolsTable.currentTablePhoonkResultValues.put(phoonk.getName(), results);
             return returnValue;
         }
         return null;
@@ -854,4 +898,16 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
                     "Invalid type for subtract operation: " + left.getClass() + " - " + right.getClass());
         }
     }
+
+    @Override
+    public Object visitIntegerExpression(functiveParser.IntegerExpressionContext ctx) {
+        Integer value;
+        try {
+            value = Integer.parseInt(ctx.getText());
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Invalid integer value: " + ctx.getText());
+        }
+        return value;
+    }
+
 }
