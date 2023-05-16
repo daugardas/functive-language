@@ -507,10 +507,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitPrint(functiveParser.PrintContext ctx) {
-        System.out.println("Visited Print: " + ctx.getText());
-
-        Object printExpression = visit(ctx.expression());
-
+        System.out.println(visit(ctx.expression()));
         return null;
     }
 
