@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args) {
         try {
-            Path path = Paths.get("functive-code/forTest.functive");
+            Path path = Paths.get("functive-code/switchTest.functive");
             System.out.println(path.toAbsolutePath().toString());
             execute(CharStreams.fromFileName(path.toAbsolutePath().toString()));
         } catch (Exception ex) {

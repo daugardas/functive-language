@@ -1,0 +1,46 @@
+int a = 1;
+int testSwitch = 0;
+switch (a){ // should go to case 1 and default
+    case 1:
+        testSwitch = 1;
+    case 2:
+        testSwitch = 10;
+    case 3:
+        testSwitch = 100;
+    default:
+        testSwitch = testSwitch + 69; 
+}
+
+print "testswitch: " + testSwitch;
+
+a = 2;
+testSwitch = 0;
+switch (a){ // should go to case 2 and default
+    case 1:
+        testSwitch = 1;
+        break;
+    case 2:
+        testSwitch = 10;
+    case 3:
+        testSwitch = 100;
+        break;
+    default:
+        testSwitch = testSwitch + 69; 
+}
+print "testswitch: " + testSwitch;
+
+a = 3;
+testSwitch = 0;
+switch (a){ // should go to case 3 and break
+    case 1:
+        testSwitch = 1;
+        break;
+    case 2:
+        testSwitch = 10;
+    case 3:
+        testSwitch = 100;
+        break;
+    default:
+        testSwitch = testSwitch + 69; 
+}
+print "testswitch: " + testSwitch;
