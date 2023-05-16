@@ -455,7 +455,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitWhileLoop(functiveParser.WhileLoopContext ctx) {
-        //System.out.println("Visited WhileLoop: " + ctx.getText());
+        // System.out.println("Visited WhileLoop: " + ctx.getText());
         Object controlExpression = visit(ctx.expression());
         if (controlExpression instanceof Boolean) {
             while ((Boolean) controlExpression) {
@@ -568,7 +568,11 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitIdentifierExpression(functiveParser.IdentifierExpressionContext ctx) {
-        return symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+        Object identifierValue = symbolsTable.currentTable.get(ctx.IDENTIFIER().getText());
+        if (identifierValue == null) {
+            throw new RuntimeException("Variable " + ctx.IDENTIFIER().getText() + " not defined");
+        }
+        return identifierValue;
     }
 
     @Override
@@ -738,18 +742,18 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
 
     @Override
     public Object visitBlock(functiveParser.BlockContext ctx) {
-        //System.out.println("Visited Block: " + ctx.getText());
-        //printCurrentBlockVariablesAndValues();
+        // System.out.println("Visited Block: " + ctx.getText());
+        // printCurrentBlockVariablesAndValues();
         symbolsTable.enterBlock();
-        //printCurrentBlockVariablesAndValues();
+        // printCurrentBlockVariablesAndValues();
         // visit all the statements in the block
         for (functiveParser.StatementContext statementContext : ctx.statement()) {
-            //System.out.println("Visiting statement: " + statementContext.getText());
+            // System.out.println("Visiting statement: " + statementContext.getText());
             visit(statementContext);
         }
-        //printCurrentBlockVariablesAndValues();
+        // printCurrentBlockVariablesAndValues();
         symbolsTable.exitBlock();
-        //printCurrentBlockVariablesAndValues();
+        // printCurrentBlockVariablesAndValues();
         return null;
     }
 
