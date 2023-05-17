@@ -18,7 +18,8 @@ statement:
 	| functionCall ';'
 	| print ';'
 	| returnStatement ';'
-	| breakStatement ';';
+	| breakStatement ';'
+	| block;
 
 // Variable Declaration
 varDeclaration: (TYPE | 'String') IDENTIFIER ('=' expression)?;

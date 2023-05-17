@@ -276,20 +276,20 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         // if the ifStatement visitor returns null, then the condition was false
         Object condition = visit(ctx.ifStatement());
 
-        if ((boolean) condition == false) {
+        if (condition == null) {
             // there can be multiple elseif statements
             for (var elseifStatement : ctx.elseifStatement()) {
                 // visit the elseif statement
                 condition = visit(elseifStatement); // will return null if none of the elseif conditions are ture
-                if ((boolean) condition == true) {
-                    return null;
+                if (condition != null) {
+                    return condition;
                 }
             }
             if (ctx.elseStatement() != null)
-                visit(ctx.elseStatement());
+                condition = visit(ctx.elseStatement());
         }
 
-        return null;
+        return condition;
     }
 
     @Override
@@ -298,11 +298,10 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object condition = visit(ctx.expression());
 
         if ((boolean) condition) {
-            visit(ctx.block());
-            return true;
+            return visit(ctx.block());
         }
 
-        return false;
+        return null;
     }
 
     @Override
@@ -312,11 +311,10 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object condition = visit(ctx.expression());
 
         if ((boolean) condition) {
-            visit(ctx.block());
-            return true;
+            return visit(ctx.block());
         }
 
-        return false;
+        return null;
     }
 
     @Override
@@ -768,9 +766,14 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
                 break;
             }
 
-            visit(statementContext);
+            returnValue = visit(statementContext);
+            if(returnValue != null){
+                break;
+            }
         }
+        //System.out.println("Return preis: " + returnValue);
         symbolsTable.exitBlock();
+       //System.out.println("Return po: " + returnValue);
         return returnValue;
     }
 

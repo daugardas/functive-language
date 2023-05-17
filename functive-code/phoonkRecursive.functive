@@ -1,0 +1,9 @@
+phoonk string recursive(string a, int b){
+    if(b > 3){
+        return a;
+    }
+    b = b + 1;
+    return recursive(a + a, b);
+}
+
+print recursive("a", 0);
