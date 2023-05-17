@@ -7,3 +7,24 @@ phoonk string recursive(string a, int b){
 }
 
 print recursive("a", 0);
+print recursive("b", 1);
+
+print "0: " + recursive[0];
+print "1: " + recursive[1];
+
+phoonk int powerTo(int value, int power){
+    int original = value;
+    for(int i = 1; i < power; i = i + 1){
+        value = value * original;
+    }
+    return value;
+}
+
+int test1 = powerTo(2, 2); // 4
+int test2 = powerTo(2, 3); // 8
+int test3 = powerTo(2,4); // 16
+
+print powerTo[0]; // 4
+print powerTo[1]; // 8
+print powerTo[2]; // 16
+print powerTo[3]; // 4

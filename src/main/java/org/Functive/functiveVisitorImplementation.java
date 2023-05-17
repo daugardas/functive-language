@@ -767,13 +767,13 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
             }
 
             returnValue = visit(statementContext);
-            if(returnValue != null){
+            if (returnValue != null) {
                 break;
             }
         }
-        //System.out.println("Return preis: " + returnValue);
+        // System.out.println("Return preis: " + returnValue);
         symbolsTable.exitBlock();
-       //System.out.println("Return po: " + returnValue);
+        // System.out.println("Return po: " + returnValue);
         return returnValue;
     }
 
