@@ -13,6 +13,10 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args) {
         try {
+            if(args.length > 0) {
+                execute(CharStreams.fromFileName(args[0]));
+                return;
+            }
             Path path = Paths.get("functive-code/phoonkTest.functive");
             System.out.println(path.toAbsolutePath().toString());
             execute(CharStreams.fromFileName(path.toAbsolutePath().toString()));
