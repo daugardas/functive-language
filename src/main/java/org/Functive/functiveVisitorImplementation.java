@@ -482,7 +482,7 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
             throw new RuntimeException("Invalid number of arguments passed in function call");
 
         // enter the function scope
-        symbolsTable.enterBlock();
+        symbolsTable.enterPhoonkBlock();
 
         // add the arguments to the function scope
         if (ctx.arguments() != null) {
@@ -505,13 +505,16 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object returnValue = visit(phoonk.getBody());
 
         // exit the function scope
-        symbolsTable.exitBlock();
+        symbolsTable.exitPhoonkBlock();
 
         if (!phoonk.getReturnType().equals("void")) {
-            ArrayList<Object> results = symbolsTable.currentTablePhoonkResultValues
-                    .get(phoonk.getName());
-            results.add(returnValue);
-            symbolsTable.currentTablePhoonkResultValues.put(phoonk.getName(), results);
+            if (!symbolsTable.isInPhoonkBlock) {
+                ArrayList<Object> results = symbolsTable.currentTablePhoonkResultValues
+                        .get(phoonk.getName());
+                results.add(returnValue);
+                symbolsTable.currentTablePhoonkResultValues.put(phoonk.getName(), results);
+            }
+
             return returnValue;
         }
         return null;
@@ -760,7 +763,6 @@ public class functiveVisitorImplementation extends functiveBaseVisitor<Object> {
         Object returnValue = null;
         for (functiveParser.StatementContext statementContext : ctx.statement()) {
             // check if the current statement is a return statement, if it is, then return
-
             if (statementContext.returnStatement() != null) {
                 returnValue = visit(statementContext.returnStatement());
                 break;

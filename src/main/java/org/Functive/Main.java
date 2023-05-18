@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args) {
         try {
-            String defaultCode = "functive-code/phoonkRecursive.functive";
+            String defaultCode = "functive-code/testAll.functive";
             if(args.length > 0) {
                 Path path = Paths.get(args[0]);
                 execute(CharStreams.fromFileName(path.toAbsolutePath().toString()));

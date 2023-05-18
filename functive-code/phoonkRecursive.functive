@@ -1,9 +1,12 @@
 phoonk string recursive(string a, int b){
-    if(b > 3){
+    if(b <= 0){
+        return "";
+    }
+    if(b == 1){
         return a;
     }
-    b = b + 1;
-    return recursive(a + a, b);
+    //b = b + 1;
+    return recursive(a + a, b - 1);
 }
 
 print recursive("a", 0);

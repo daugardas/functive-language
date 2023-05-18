@@ -10,10 +10,13 @@ public class FunctiveSymbolsTable {
     private class SymbolTableEntry {
         private final Map<String, Object> table;
         private final Map<String, ArrayList<Object>> phoonkResultValues;
+        private final boolean isInPhoonkBlock;
 
-        public SymbolTableEntry(Map<String, Object> table, Map<String, ArrayList<Object>> phoonkResultValues) {
+        public SymbolTableEntry(Map<String, Object> table, Map<String, ArrayList<Object>> phoonkResultValues,
+                boolean isInPhoonkBlock) {
             this.table = table;
             this.phoonkResultValues = phoonkResultValues;
+            this.isInPhoonkBlock = isInPhoonkBlock;
         }
 
         public Map<String, Object> getTable() {
@@ -28,6 +31,7 @@ public class FunctiveSymbolsTable {
     Stack<SymbolTableEntry> stack;
     public Map<String, Object> currentTable;
     public Map<String, ArrayList<Object>> currentTablePhoonkResultValues;
+    public boolean isInPhoonkBlock = false;
 
     public FunctiveSymbolsTable() {
         stack = new Stack<>();
@@ -36,7 +40,10 @@ public class FunctiveSymbolsTable {
     }
 
     public void enterBlock() {
-        stack.push(new SymbolTableEntry(currentTable, currentTablePhoonkResultValues));
+        boolean isInPhoonkBlock = this.isInPhoonkBlock;
+        if (!stack.isEmpty())
+            isInPhoonkBlock = stack.peek().isInPhoonkBlock;
+        stack.push(new SymbolTableEntry(currentTable, currentTablePhoonkResultValues, isInPhoonkBlock));
         Map<String, Object> scopedTable = new HashMap<>();
         // add outside variables to the scopedTable
         for (Map.Entry<String, Object> entry : currentTable.entrySet()) {
@@ -75,5 +82,36 @@ public class FunctiveSymbolsTable {
                 currentTablePhoonkResultValues.put(entry.getKey(), entry.getValue());
             }
         }
+    }
+
+    public void enterPhoonkBlock() {
+        // check if phoonk block was already entered
+        boolean isInPhoonkBlock = this.isInPhoonkBlock;
+        if (!stack.isEmpty() && !isInPhoonkBlock)
+            isInPhoonkBlock = stack.peek().isInPhoonkBlock;
+        stack.push(new SymbolTableEntry(currentTable, currentTablePhoonkResultValues, isInPhoonkBlock));
+        Map<String, Object> scopedTable = new HashMap<>();
+        Map<String, ArrayList<Object>> scopedTablePhoonkResultValues = new HashMap<>();
+
+        // now when the function call is made and it updates the parameters, previous
+        // values are not affected
+        for (Map.Entry<String, Object> entry : currentTable.entrySet()) {
+            scopedTable.put(entry.getKey(), entry.getValue());
+        }
+        currentTable = scopedTable;
+        for (Map.Entry<String, ArrayList<Object>> entry : currentTablePhoonkResultValues.entrySet()) {
+            scopedTablePhoonkResultValues.put(entry.getKey(), entry.getValue());
+        }
+        currentTablePhoonkResultValues = scopedTablePhoonkResultValues;
+        this.isInPhoonkBlock = true;
+    }
+
+    public void exitPhoonkBlock() {
+        SymbolTableEntry exitedEntry = stack.pop();
+        currentTable = exitedEntry.getTable();
+        currentTablePhoonkResultValues = exitedEntry.getPhoonkResultValues();
+
+        // check if we are still in phoonk block
+        this.isInPhoonkBlock = exitedEntry.isInPhoonkBlock;
     }
 }

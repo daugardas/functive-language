@@ -1,0 +1,152 @@
+print "------------TESTING PRINT STATEMENT----------------";
+
+print "";
+print "123";
+print "test";
+print "test123";
+print 123456;
+print 1234.55;
+print true;
+print false;
+
+int testPrint1 = 99;
+float testPrint2 = 44.44;
+string testPrint3 = "test string";
+boolean testPrint4 = true;
+boolean testPrint5 = false;
+int [] testArrayPrint = [1,2,3,4,5,6];
+
+print testPrint1;
+print testPrint2;
+print testPrint3;
+print testPrint4;
+print testPrint5;
+print testArrayPrint;
+
+print testPrint1 + " + " + testPrint1 + " = " + (testPrint1 + testPrint1);
+print testPrint2 + " + " + testPrint2 + " = " + (testPrint2 + testPrint2);
+print testPrint3 + " + " + testPrint3 + " = " + (testPrint3 + testPrint3);
+print testPrint4 + " + " + testPrint4 + " = " + (testPrint4 + testPrint4);
+print testPrint5 + " + " + testPrint5 + " = " + (testPrint5 + testPrint5);
+print testPrint4 + " + " + testPrint5 + " = " + (testPrint4 + testPrint5);
+// print testArrayPrint + " + " + testArrayPrint + " = " + (testArrayPrint + testArrayPrint); // throws error
+
+print testPrint1 + " - " + testPrint1 + " = " + (testPrint1 - testPrint1);
+print testPrint2 + " - " + testPrint2 + " = " + (testPrint2 - testPrint2);
+// print testPrint3 + " - " + testPrint3 + " = " + (testPrint3 - testPrint3); // strings cannot be subtracted
+// print testPrint4 + " - " + testPrint4 + " = " + (testPrint4 - testPrint4); // booleans cannot be subtracted
+// print testPrint5 + " - " + testPrint5 + " = " + (testPrint5 - testPrint5); // booleans cannot be subtracted
+// print testPrint4 + " - " + testPrint5 + " = " + (testPrint4 - testPrint5); // booleans cannot be subtracted
+// print testArrayPrint + " - " + testArrayPrint + " = " + (testArrayPrint - testArrayPrint); // throws error
+
+print testPrint1 + " * " + testPrint1 + " = " + (testPrint1 * testPrint1);
+print testPrint2 + " * " + testPrint2 + " = " + (testPrint2 * testPrint2);
+// print testPrint3 + " * " + testPrint3 + " = " + (testPrint3 * testPrint3); // strings cannot be multiplied
+// print testPrint4 + " * " + testPrint4 + " = " + (testPrint4 * testPrint4); // booleans cannot be multiplied
+// print testPrint5 + " * " + testPrint5 + " = " + (testPrint5 * testPrint5); // booleans cannot be multiplied
+// print testPrint4 + " * " + testPrint5 + " = " + (testPrint4 * testPrint5); // booleans cannot be multiplied
+// print testArrayPrint + " * " + testArrayPrint + " = " + (testArrayPrint * testArrayPrint); // throws error
+
+print testPrint1 + " / " + testPrint1 + " = " + (testPrint1 / testPrint1);
+print testPrint2 + " / " + testPrint2 + " = " + (testPrint2 / testPrint2);
+// print testPrint3 + " / " + testPrint3 + " = " + (testPrint3 / testPrint3); // strings cannot be divided
+// print testPrint4 + " / " + testPrint4 + " = " + (testPrint4 / testPrint4); // booleans cannot be multiplied
+// print testPrint5 + " / " + testPrint5 + " = " + (testPrint5 / testPrint5); // booleans cannot be multiplied
+// print testPrint4 + " / " + testPrint5 + " = " + (testPrint4 / testPrint5); // booleans cannot be multiplied
+// print testArrayPrint + " / " + testArrayPrint + " = " + (testArrayPrint / testArrayPrint); // throws error
+
+print testPrint1 + " % " + testPrint1 + " = " + (testPrint1 % testPrint1);
+print testPrint2 + " % " + testPrint2 + " = " + (testPrint2 % testPrint2);
+// print testPrint3 + " % " + testPrint3 + " = " + (testPrint3 % testPrint3); // Modulus arithmetics doesn't work on strings
+// print testPrint4 + " % " + testPrint4 + " = " + (testPrint4 % testPrint4); // Modulus arithmetics doesn't work on booleans
+// print testPrint5 + " % " + testPrint5 + " = " + (testPrint5 % testPrint5); // Modulus arithmetics doesn't work on booleans
+// print testPrint4 + " % " + testPrint5 + " = " + (testPrint4 % testPrint5); // Modulus arithmetics doesn't work on booleans
+// print testArrayPrint + " % " + testArrayPrint + " = " + (testArrayPrint % testArrayPrint); // throws error
+
+print "------------TESTING ADDITION----------------";
+
+print 1+1; // 2
+print "1"+"1"; // 11
+print "1"+2; // 12
+
+print "------------TESTING ADDITION THROUGH PHOONK----------------";
+phoonk int add10(int c){
+    return c + 10;
+}
+
+int b = 2;
+print "original b: " + b; // original b: 2
+b = add10(b);
+print "Should add 10 to b: " + b; // Should add 10 to b: 12
+
+print "------------TESTING PRINTING THROUGH void PHOONK----------------";
+
+phoonk void printHelloWorld(){
+    print "Hello World!";
+}
+
+printHelloWorld(); // Hello World!
+
+print "------------TESTING STRING ADDITION THROUGH PHOONK PARAMETERS----------------";
+
+phoonk string getFullName(string firstName, string lastName){
+    return firstName + " " + lastName;
+}
+
+string fullName;
+fullName = getFullName("Test", "Func");
+print fullName; // Test Func
+string fullNameTest = getFullName("Test1", "Func2");
+print fullNameTest; // Test1 Func2
+
+print getFullName("test", "print"); // test print
+
+print "------------TESTING ARRAY ACCESS----------------";
+
+int [] testArray = [1,2,3,4,5];
+print "first element: " + testArray[0]; // first element: 1
+
+print "------------TESTING MULTIPLICATION THROUGH PHOONK----------------";
+
+phoonk int testPhoonkAnswer(int p){
+    return p * 2;
+}
+
+int test = testPhoonkAnswer(2); // 4 i masyva
+print test; // 4
+
+print testPhoonkAnswer(5); // 10
+
+print testPhoonkAnswer[0]; // 4
+print testPhoonkAnswer[1]; // 10
+
+print "should return -4: " + testPhoonkAnswer(-2); // -4 i masyva
+
+print "should return 10: " + testPhoonkAnswer[4]; // tik 3 elementai yra masyve
+
+print "should return -4: " + testPhoonkAnswer[-1];
+print "should return 10: " + testPhoonkAnswer[-2];
+print "should return 4: " + testPhoonkAnswer[-3];
+print "should return -4: " + testPhoonkAnswer[-4];
+print "should return 10: " + testPhoonkAnswer[-2];
+
+print "------------TESTING FIBONNACI PHOONK----------------";
+
+phoonk int fibonnaci(int n){
+    if (n <= 1){
+        return n;
+    }
+    return fibonnaci(n - 2) + fibonnaci(n - 1);
+}
+
+print fibonnaci(0); // 0
+print fibonnaci(1); // 1
+print fibonnaci(2); // 1
+print fibonnaci(3); // 2
+print fibonnaci(4); // 3
+print fibonnaci(5); // 5
+print fibonnaci(6); // 8
+print fibonnaci(7); // 13
+print fibonnaci(8); // 21
+print fibonnaci(9); // 34
+print fibonnaci(10); // 55

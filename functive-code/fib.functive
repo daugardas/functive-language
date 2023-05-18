@@ -1,0 +1,31 @@
+phoonk int fibonnaci(int n){
+    if (n <= 1){
+        return n;
+    }
+    return fibonnaci(n - 2) + fibonnaci(n - 1);
+}
+
+print fibonnaci(0); // 0
+print fibonnaci(1); // 1
+print fibonnaci(2); // 1
+print fibonnaci(3); // 2
+print fibonnaci(4); // 3
+print fibonnaci(5); // 5
+print fibonnaci(6); // 8
+print fibonnaci(7); // 13
+print fibonnaci(8); // 21
+print fibonnaci(9); // 34
+print fibonnaci(10); // 55
+
+print fibonnaci[0]; // 0
+print fibonnaci[1]; // 1
+print fibonnaci[2]; // 1
+print fibonnaci[3]; // 2
+print fibonnaci[4]; // 3
+print fibonnaci[5]; // 5
+print fibonnaci[6]; // 8
+print fibonnaci[7]; // 13
+print fibonnaci[8]; // 21
+print fibonnaci[9]; // 34
+print fibonnaci[10]; // 55
+print fibonnaci[11]; // 0
